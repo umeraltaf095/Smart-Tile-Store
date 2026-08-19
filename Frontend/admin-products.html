@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manage Tile Products - Smart Tile Store & Inventory Management System">
+  <title>Manage Tile Products - Admin Panel</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glow -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Sticky Admin Navigation Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="admin-dashboard.html" style="text-decoration: none;">
+        <div class="brand-header">
+          <div class="brand-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary));">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Admin Panel</span></div>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+          <li><a href="admin-categories.html" class="nav-link">Manage Categories</a></li>
+          <li><a href="admin-products.html" class="nav-link active">Manage Products</a></li>
+          <li><a href="admin-dashboard.html#inventoryTable" class="nav-link">Inventory Tracking</a></li>
+          <li><a href="index.html" target="_blank" class="nav-link">Preview Storefront ↗</a></li>
+        </ul>
+      </nav>
+
+      <!-- Admin Profile Badge -->
+      <div class="user-profile-badge" style="border-color: rgba(139, 92, 246, 0.4);">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary));">A</div>
+        <div class="user-info">
+          <span class="user-name">Welcome, Admin</span>
+          <span class="user-role-tag" style="color:var(--accent-gold);">System Manager</span>
+        </div>
+        <button class="btn-logout" title="Log Out" onclick="handleLogout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tile Product Management Section -->
+  <section class="section-container">
+    
+    <!-- Page Header & Action Button -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+      <div>
+        <h2 style="font-family:var(--font-heading); font-size:2rem; font-weight:700;">Manage Tile Products Catalog</h2>
+        <p style="color:var(--text-muted); font-size:0.92rem;">Maintain tile product details including size, design, price, manufacturing company, and unit types.</p>
+      </div>
+      <button class="btn-admin-action" onclick="openModal('addProductModal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add New Tile Product
+      </button>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(59, 130, 246, 0.15); color:var(--primary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="totalProductCount">5</span>
+          <span class="stat-label">Total Tile Models</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245, 158, 11, 0.15); color:var(--accent-gold);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">935</span>
+          <span class="stat-label">Boxes in Main Hub</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(6, 182, 212, 0.15); color:var(--accent-cyan);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">4 Brands</span>
+          <span class="stat-label">Tile Manufacturers</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(139, 92, 246, 0.15); color:var(--accent-purple);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">3 Units</span>
+          <span class="stat-label">Sq.Ft / Box / Sq.M</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Table Card -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          Tile Product Catalog Maintenance
+        </h3>
+        <span style="font-size:0.85rem; color:var(--text-muted);">Manage Tile Sizes, Designs, Prices, Brands & Measurement Units</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Item ID</th>
+              <th>Tile Product & Design</th>
+              <th>Category</th>
+              <th>Dimensions (Size)</th>
+              <th>Manufacturing Brand</th>
+              <th>Price</th>
+              <th>Measurement Unit</th>
+              <th>Main Hub Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productTbody">
+            
+            <!-- Row 1 -->
+            <tr id="prodRow-1">
+              <td><strong style="color:var(--primary);">T-FL-101</strong></td>
+              <td>
+                <div style="font-weight:600;">Carrara White Polished Marble</div>
+                <div style="font-size:0.78rem; color:var(--text-dim);">Design Code: Glossy Porcelain Finish</div>
+              </td>
+              <td><span class="badge-tag badge-floor">Floor Tile</span></td>
+              <td>60 x 120 cm</td>
+              <td><strong style="color:var(--accent-cyan);">Master Tiles</strong></td>
+              <td><strong style="color:#10b981;">$4.50</strong></td>
+              <td><span class="badge-tag" style="background:#f1f5f9; color:var(--text-muted);">Per Sq. Ft</span></td>
+              <td>140 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditProductModal('T-FL-101', 'Carrara White Polished Marble', 'Floor Tile', '60 x 120 cm', 'Master Tiles', '4.50', 'Per Sq. Ft', '140')" title="Edit Tile">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteProductDemo('prodRow-1', 'Carrara White Polished Marble')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Tile">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr id="prodRow-2">
+              <td><strong style="color:var(--primary);">T-WS-204</strong></td>
+              <td>
+                <div style="font-weight:600;">Slate Grey Anti-Skid Matte</div>
+                <div style="font-size:0.78rem; color:var(--text-dim);">Design Code: Non-Slip Textured Finish</div>
+              </td>
+              <td><span class="badge-tag badge-washroom">Washroom Tile</span></td>
+              <td>30 x 60 cm</td>
+              <td><strong style="color:var(--accent-cyan);">RAK Ceramics</strong></td>
+              <td><strong style="color:#10b981;">$3.20</strong></td>
+              <td><span class="badge-tag" style="background:#f1f5f9; color:var(--text-muted);">Per Sq. Ft</span></td>
+              <td>210 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditProductModal('T-WS-204', 'Slate Grey Anti-Skid Matte', 'Washroom Tile', '30 x 60 cm', 'RAK Ceramics', '3.20', 'Per Sq. Ft', '210')" title="Edit Tile">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteProductDemo('prodRow-2', 'Slate Grey Anti-Skid Matte')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Tile">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr id="prodRow-3">
+              <td><strong style="color:var(--primary);">T-EL-308</strong></td>
+              <td>
+                <div style="font-weight:600;">Rustic Slate 3D Stone Wall</div>
+                <div style="font-size:0.78rem; color:var(--text-dim);">Design Code: 3D Facade Brick Texture</div>
+              </td>
+              <td><span class="badge-tag badge-elevation">Elevation Tile</span></td>
+              <td>20 x 40 cm</td>
+              <td><strong style="color:var(--accent-cyan);">Stile Tiles</strong></td>
+              <td><strong style="color:#10b981;">$5.80</strong></td>
+              <td><span class="badge-tag" style="background:#f1f5f9; color:var(--text-muted);">Per Box</span></td>
+              <td>85 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditProductModal('T-EL-308', 'Rustic Slate 3D Stone Wall', 'Elevation Tile', '20 x 40 cm', 'Stile Tiles', '5.80', 'Per Box', '85')" title="Edit Tile">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteProductDemo('prodRow-3', 'Rustic Slate 3D Stone Wall')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Tile">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr id="prodRow-4">
+              <td><strong style="color:var(--primary);">T-FL-105</strong></td>
+              <td>
+                <div style="font-weight:600;">Royal Emperador Dark Marble</div>
+                <div style="font-size:0.78rem; color:var(--text-dim);">Design Code: Deep Vein Italian Polish</div>
+              </td>
+              <td><span class="badge-tag badge-floor">Floor Tile</span></td>
+              <td>80 x 80 cm</td>
+              <td><strong style="color:var(--accent-cyan);">Karam Ceramica</strong></td>
+              <td><strong style="color:#10b981;">$6.20</strong></td>
+              <td><span class="badge-tag" style="background:#f1f5f9; color:var(--text-muted);">Per Sq. Ft</span></td>
+              <td>320 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditProductModal('T-FL-105', 'Royal Emperador Dark Marble', 'Floor Tile', '80 x 80 cm', 'Karam Ceramica', '6.20', 'Per Sq. Ft', '320')" title="Edit Tile">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteProductDemo('prodRow-4', 'Royal Emperador Dark Marble')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Tile">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr id="prodRow-5">
+              <td><strong style="color:var(--primary);">T-WS-210</strong></td>
+              <td>
+                <div style="font-weight:600;">Glossy Spanish Ceramic Subway</div>
+                <div style="font-size:0.78rem; color:var(--text-dim);">Design Code: Beveled Edge High-Gloss</div>
+              </td>
+              <td><span class="badge-tag badge-washroom">Washroom Tile</span></td>
+              <td>10 x 30 cm</td>
+              <td><strong style="color:var(--accent-cyan);">Master Tiles</strong></td>
+              <td><strong style="color:#10b981;">$2.90</strong></td>
+              <td><span class="badge-tag" style="background:#f1f5f9; color:var(--text-muted);">Per Tile</span></td>
+              <td>180 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditProductModal('T-WS-210', 'Glossy Spanish Ceramic Subway', 'Washroom Tile', '10 x 30 cm', 'Master Tiles', '2.90', 'Per Tile', '180')" title="Edit Tile">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteProductDemo('prodRow-5', 'Glossy Spanish Ceramic Subway')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Tile">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Modal 1: Add New Tile Product -->
+  <div id="addProductModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">➕ Add New Tile Product</h3>
+        <button class="btn-close-modal" onclick="closeModal('addProductModal')">&times;</button>
+      </div>
+
+      <form onsubmit="handleAddProductSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prodCode">Item ID / Code</label>
+            <input type="text" id="prodCode" class="form-input" placeholder="e.g. T-FL-112" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prodCategory">Category</label>
+            <select id="prodCategory" class="form-input" required>
+              <option value="Floor Tile">Floor Tile</option>
+              <option value="Washroom Tile">Washroom Tile</option>
+              <option value="Elevation Tile">Elevation Tile</option>
+              <option value="Kitchen Tile">Kitchen Tile</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prodName">Tile Product Name & Design</label>
+          <input type="text" id="prodName" class="form-input" placeholder="e.g. Calacatta Gold Glossy Porcelain" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prodSize">Dimensions (Size)</label>
+            <input type="text" id="prodSize" class="form-input" placeholder="e.g. 60 x 120 cm or 2x4 ft" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prodCompany">Manufacturing Brand / Company</label>
+            <input type="text" id="prodCompany" class="form-input" placeholder="e.g. Master Tiles / RAK Ceramics" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prodPrice">Price ($)</label>
+            <input type="number" step="0.01" id="prodPrice" class="form-input" placeholder="4.99" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prodUnit">Measurement Unit Type</label>
+            <select id="prodUnit" class="form-input" required>
+              <option value="Per Sq. Ft">Per Sq. Ft</option>
+              <option value="Per Box">Per Box</option>
+              <option value="Per Tile">Per Tile</option>
+              <option value="Per Sq. Meter">Per Sq. Meter</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prodStock">Initial Warehouse Stock (Boxes)</label>
+          <input type="number" id="prodStock" class="form-input" placeholder="100" required>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:28px;">
+          <button type="submit" class="btn-submit" style="flex:1;">Save Tile Product</button>
+          <button type="button" class="btn-admin-secondary" onclick="closeModal('addProductModal')" style="padding: 12px 20px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Tile Product -->
+  <div id="editProductModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Edit Tile Details</h3>
+        <button class="btn-close-modal" onclick="closeModal('editProductModal')">&times;</button>
+      </div>
+
+      <form onsubmit="handleEditProductSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="editCode">Item ID / Code</label>
+            <input type="text" id="editCode" class="form-input" readonly style="opacity:0.7;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editCategory">Category</label>
+            <select id="editCategory" class="form-input" required>
+              <option value="Floor Tile">Floor Tile</option>
+              <option value="Washroom Tile">Washroom Tile</option>
+              <option value="Elevation Tile">Elevation Tile</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="editName">Tile Product Name & Design</label>
+          <input type="text" id="editName" class="form-input" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="editSize">Dimensions (Size)</label>
+            <input type="text" id="editSize" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editCompany">Manufacturing Brand / Company</label>
+            <input type="text" id="editCompany" class="form-input" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="editPrice">Price ($)</label>
+            <input type="number" step="0.01" id="editPrice" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editUnit">Measurement Unit Type</label>
+            <select id="editUnit" class="form-input" required>
+              <option value="Per Sq. Ft">Per Sq. Ft</option>
+              <option value="Per Box">Per Box</option>
+              <option value="Per Tile">Per Tile</option>
+              <option value="Per Sq. Meter">Per Sq. Meter</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="editStock">Main Warehouse Stock (Boxes)</label>
+          <input type="number" id="editStock" class="form-input" required>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:28px;">
+          <button type="submit" class="btn-submit" style="flex:1;">Update Tile Details</button>
+          <button type="button" class="btn-admin-secondary" onclick="closeModal('editProductModal')" style="padding: 12px 20px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Admin</span></div>
+        </div>
+        <p>Centralized Inventory Management Portal for maintaining tile sizes, designs, prices, brands, and units.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>System Modules</h4>
+        <ul class="footer-links">
+          <li><a href="admin-dashboard.html">Admin Overview</a></li>
+          <li><a href="admin-categories.html">Manage Categories</a></li>
+          <li><a href="admin-products.html">Manage Products</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Storefront Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Customer Storefront</a></li>
+          <li><a href="contact.html">Store Outlets</a></li>
+          <li><a href="login.html">Login Screen</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>System Status</h4>
+        <ul class="footer-links">
+          <li>Database Sync: Connected</li>
+          <li>Main Warehouse A: Online</li>
+          <li>Active Products: 5 Models</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smart Tile Store System. Product Maintenance Portal.</span>
+      <span>HTML5 • CSS3 • Vanilla JS</span>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Alert -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Tile product updated successfully!</span>
+  </div>
+
+  <script>
+    let productCounter = 5;
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function handleAddProductSubmit(event) {
+      event.preventDefault();
+      const code = document.getElementById('prodCode').value;
+      const cat = document.getElementById('prodCategory').value;
+      const name = document.getElementById('prodName').value;
+      const size = document.getElementById('prodSize').value;
+      const company = document.getElementById('prodCompany').value;
+      const price = parseFloat(document.getElementById('prodPrice').value).toFixed(2);
+      const unit = document.getElementById('prodUnit').value;
+      const stock = document.getElementById('prodStock').value;
+
+      productCounter++;
+      const rowId = `prodRow-${productCounter}`;
+
+      let badgeClass = 'badge-floor';
+      if (cat.includes('Washroom')) badgeClass = 'badge-washroom';
+      if (cat.includes('Elevation')) badgeClass = 'badge-elevation';
+
+      const tbody = document.getElementById('productTbody');
+      const tr = document.createElement('tr');
+      tr.id = rowId;
+      tr.innerHTML = `
+        <td><strong style="color:var(--primary);">${code}</strong></td>
+        <td>
+          <div style="font-weight:600;">${name}</div>
+          <div style="font-size:0.78rem; color:var(--text-dim);">Design Code: Custom Finish</div>
+        </td>
+        <td><span class="badge-tag ${badgeClass}">${cat}</span></td>
+        <td>${size}</td>
+        <td><strong style="color:var(--accent-cyan);">${company}</strong></td>
+        <td><strong style="color:#10b981;">$${price}</strong></td>
+        <td><span class="badge-tag" style="background:#f1f5f9; color:var(--text-muted);">${unit}</span></td>
+        <td>${stock} Boxes</td>
+        <td>
+          <div class="table-actions">
+            <button class="btn-tbl" onclick="openEditProductModal('${code}', '${name}', '${cat}', '${size}', '${company}', '${price}', '${unit}', '${stock}')" title="Edit Tile">
+              ✏️ Edit
+            </button>
+            <button class="btn-tbl" onclick="deleteProductDemo('${rowId}', '${name}')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Tile">
+              🗑️ Delete
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.prepend(tr);
+
+      document.getElementById('totalProductCount').innerText = productCounter;
+      closeModal('addProductModal');
+      showToast(`Tile Product "${code}" (${name}) added!`, 'success');
+      event.target.reset();
+    }
+
+    function openEditProductModal(code, name, cat, size, company, price, unit, stock) {
+      document.getElementById('editCode').value = code;
+      document.getElementById('editName').value = name;
+      document.getElementById('editCategory').value = cat;
+      document.getElementById('editSize').value = size;
+      document.getElementById('editCompany').value = company;
+      document.getElementById('editPrice').value = price;
+      document.getElementById('editUnit').value = unit;
+      document.getElementById('editStock').value = stock;
+      openModal('editProductModal');
+    }
+
+    function handleEditProductSubmit(event) {
+      event.preventDefault();
+      const code = document.getElementById('editCode').value;
+      const name = document.getElementById('editName').value;
+      closeModal('editProductModal');
+      showToast(`Tile Details for "${code}" (${name}) updated!`, 'success');
+    }
+
+    function deleteProductDemo(rowId, name) {
+      if (confirm(`Are you sure you want to delete the product "${name}"?`)) {
+        const row = document.getElementById(rowId);
+        if (row) {
+          row.style.opacity = '0';
+          row.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            row.remove();
+            productCounter = Math.max(0, productCounter - 1);
+            document.getElementById('totalProductCount').innerText = productCounter;
+            showToast(`Product "${name}" deleted!`, 'error');
+          }, 300);
+        }
+      }
+    }
+
+    function handleLogout() {
+      showToast('Logging out of Admin Panel...', 'success');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

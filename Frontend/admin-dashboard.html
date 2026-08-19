@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Dashboard - Smart Tile Store & Inventory Management System">
+  <title>Admin Dashboard - Smart Tile Store & Inventory Management System</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glow -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Sticky Admin Navigation Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="admin-dashboard.html" style="text-decoration: none;">
+        <div class="brand-header">
+          <div class="brand-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary));">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Admin Panel</span></div>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html" class="nav-link active">Dashboard</a></li>
+          <li><a href="admin-categories.html" class="nav-link">Manage Categories</a></li>
+          <li><a href="admin-products.html" class="nav-link">Manage Products</a></li>
+          <li><a href="#inventoryTable" class="nav-link">Inventory Tracking</a></li>
+          <li><a href="index.html" target="_blank" class="nav-link">Preview Storefront ↗</a></li>
+        </ul>
+      </nav>
+
+      <!-- Admin Profile Badge -->
+      <div class="user-profile-badge" style="border-color: rgba(139, 92, 246, 0.4);">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary));">A</div>
+        <div class="user-info">
+          <span class="user-name">Welcome, Admin</span>
+          <span class="user-role-tag" style="color:var(--accent-gold);">System Manager</span>
+        </div>
+        <button class="btn-logout" title="Log Out" onclick="handleLogout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Main Dashboard Container -->
+  <section class="section-container">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+      <div>
+        <h2 style="font-family:var(--font-heading); font-size:2rem; font-weight:700;">System Overview & Stock Control</h2>
+        <p style="color:var(--text-muted); font-size:0.92rem;">Real-time inventory levels, multi-outlet stock tracking, and tile product management.</p>
+      </div>
+      <div style="font-size:0.85rem; color:var(--text-dim); background:#ffffff; padding:8px 14px; border-radius:20px; border:1px solid var(--border-light);">
+        <span style="color:#10b981;">●</span> Live Warehouse Sync Active
+      </div>
+    </div>
+
+    <!-- KPI Statistics Grid -->
+    <div class="stats-grid">
+      
+      <!-- Card 1 -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(59, 130, 246, 0.15); color:var(--primary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">148</span>
+          <span class="stat-label">Total Tile Products</span>
+          <span class="stat-trend trend-up">↑ 12 New This Month</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245, 158, 11, 0.15); color:var(--accent-gold);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">3,420</span>
+          <span class="stat-label">Total Boxes In Stock</span>
+          <span class="stat-trend trend-up">Main Warehouse & Outlets</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(6, 182, 212, 0.15); color:var(--accent-cyan);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">2</span>
+          <span class="stat-label">Active Store Outlets</span>
+          <span class="stat-trend trend-up">Metro Plaza & Design Hub</span>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(139, 92, 246, 0.15); color:var(--accent-purple);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="17 1 21 5 17 9"></polyline>
+            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+            <polyline points="7 23 3 19 7 15"></polyline>
+            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">12</span>
+          <span class="stat-label">Stock Transfers</span>
+          <span class="stat-trend trend-amber">⚡ 4 Pending Approval</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Action Toolbar -->
+    <div class="admin-toolbar">
+      <div style="font-family:var(--font-heading); font-weight:700; font-size:1.05rem;">Quick Management Actions:</div>
+      <div class="toolbar-actions">
+        <button class="btn-admin-action" onclick="openModal('addProductModal')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add New Tile Product
+        </button>
+        <a href="admin-categories.html" class="btn-admin-secondary" style="text-decoration:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Manage Tile Categories
+        </a>
+        <button class="btn-admin-secondary" onclick="triggerTransferDemo()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path></svg>
+          Initiate Stock Transfer
+        </button>
+        <button class="btn-admin-secondary" onclick="exportReportDemo()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Export Stock CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Inventory & Outlet Table -->
+    <div class="admin-card" id="inventoryTable">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          Multi-Outlet Tile Inventory Tracker
+        </h3>
+        <span style="font-size:0.85rem; color:var(--text-muted);">Showing 5 of 148 Items</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Item ID</th>
+              <th>Tile Product Name</th>
+              <th>Category</th>
+              <th>Dimensions</th>
+              <th>Price / sq.ft</th>
+              <th>Main Warehouse</th>
+              <th>Metro Outlet #1</th>
+              <th>Design Hub #2</th>
+              <th>Quick Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTbody">
+            
+            <tr>
+              <td><strong style="color:var(--primary);">T-FL-101</strong></td>
+              <td>Carrara White Polished Porcelain</td>
+              <td><span class="badge-tag badge-floor">Floor Tile</span></td>
+              <td>60 x 120 cm</td>
+              <td>$4.50</td>
+              <td><strong style="color:#10b981;">140 Boxes</strong></td>
+              <td>45 Boxes</td>
+              <td>25 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="editProductDemo('T-FL-101')">Edit</button>
+                  <button class="btn-tbl" onclick="transferStockDemo('T-FL-101')">Transfer</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong style="color:var(--primary);">T-WS-204</strong></td>
+              <td>Slate Grey Anti-Skid Matte</td>
+              <td><span class="badge-tag badge-washroom">Washroom Tile</span></td>
+              <td>30 x 60 cm</td>
+              <td>$3.20</td>
+              <td><strong style="color:#10b981;">210 Boxes</strong></td>
+              <td>60 Boxes</td>
+              <td>40 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="editProductDemo('T-WS-204')">Edit</button>
+                  <button class="btn-tbl" onclick="transferStockDemo('T-WS-204')">Transfer</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong style="color:var(--primary);">T-EL-308</strong></td>
+              <td>Rustic Slate 3D Stone Texture</td>
+              <td><span class="badge-tag badge-elevation">Elevation Tile</span></td>
+              <td>20 x 40 cm</td>
+              <td>$5.80</td>
+              <td><strong style="color:#10b981;">85 Boxes</strong></td>
+              <td>30 Boxes</td>
+              <td>15 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="editProductDemo('T-EL-308')">Edit</button>
+                  <button class="btn-tbl" onclick="transferStockDemo('T-EL-308')">Transfer</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong style="color:var(--primary);">T-FL-105</strong></td>
+              <td>Royal Emperador Dark Marble</td>
+              <td><span class="badge-tag badge-floor">Floor Tile</span></td>
+              <td>80 x 80 cm</td>
+              <td>$6.20</td>
+              <td><strong style="color:#10b981;">320 Boxes</strong></td>
+              <td>90 Boxes</td>
+              <td>50 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="editProductDemo('T-FL-105')">Edit</button>
+                  <button class="btn-tbl" onclick="transferStockDemo('T-FL-105')">Transfer</button>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong style="color:var(--primary);">T-WS-210</strong></td>
+              <td>Glossy Spanish Ceramic Subway</td>
+              <td><span class="badge-tag badge-washroom">Washroom Tile</span></td>
+              <td>10 x 30 cm</td>
+              <td>$2.90</td>
+              <td><strong style="color:#10b981;">180 Boxes</strong></td>
+              <td>55 Boxes</td>
+              <td>30 Boxes</td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="editProductDemo('T-WS-210')">Edit</button>
+                  <button class="btn-tbl" onclick="transferStockDemo('T-WS-210')">Transfer</button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Add Product Modal -->
+  <div id="addProductModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Tile Product</h3>
+        <button class="btn-close-modal" onclick="closeModal('addProductModal')">&times;</button>
+      </div>
+
+      <form onsubmit="handleAddProductSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prodCode">Item ID / Code</label>
+            <input type="text" id="prodCode" class="form-input" placeholder="e.g. T-FL-110" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prodCategory">Category</label>
+            <select id="prodCategory" class="form-input" required>
+              <option value="Floor Tile">Floor Tile</option>
+              <option value="Washroom Tile">Washroom Tile</option>
+              <option value="Elevation Tile">Elevation Tile</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prodName">Tile Product Name</label>
+          <input type="text" id="prodName" class="form-input" placeholder="e.g. Calacatta Gold Glossy Porcelain" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="prodSize">Dimensions (Size)</label>
+            <input type="text" id="prodSize" class="form-input" placeholder="60 x 60 cm" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prodPrice">Price per sq.ft ($)</label>
+            <input type="number" step="0.01" id="prodPrice" class="form-input" placeholder="4.99" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prodStock">Initial Main Warehouse Boxes</label>
+          <input type="number" id="prodStock" class="form-input" placeholder="100" required>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:28px;">
+          <button type="submit" class="btn-submit" style="flex:1;">Save & Add Product</button>
+          <button type="button" class="btn-admin-secondary" onclick="closeModal('addProductModal')" style="padding: 12px 20px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div id="addCategoryModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Tile Category</h3>
+        <button class="btn-close-modal" onclick="closeModal('addCategoryModal')">&times;</button>
+      </div>
+
+      <form onsubmit="handleAddCategorySubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="catName">Category Name</label>
+          <input type="text" id="catName" class="form-input" placeholder="e.g. Outdoor Terrace Tiles" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="catDesc">Description</label>
+          <textarea id="catDesc" class="form-input" rows="3" placeholder="Category utility specifications..." required style="padding:12px 16px;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:28px;">
+          <button type="submit" class="btn-submit" style="flex:1;">Save Category</button>
+          <button type="button" class="btn-admin-secondary" onclick="closeModal('addCategoryModal')" style="padding: 12px 20px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Admin</span></div>
+        </div>
+        <p>Centralized Inventory Management Portal for tracking tile stock, transfers, and outlets.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>System Modules</h4>
+        <ul class="footer-links">
+          <li><a href="admin-dashboard.html">Admin Overview</a></li>
+          <li><a href="#inventoryTable">Inventory Control</a></li>
+          <li><a href="#addProductModal" onclick="openModal('addProductModal')">Product Management</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Storefront Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Customer Storefront</a></li>
+          <li><a href="contact.html">Store Outlets</a></li>
+          <li><a href="login.html">Login Screen</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>System Status</h4>
+        <ul class="footer-links">
+          <li>Database Sync: Connected</li>
+          <li>Main Warehouse A: Online</li>
+          <li>Outlets Connected: 2 Outlets</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smart Tile Store System. Admin Management Portal.</span>
+      <span>HTML5 • CSS3 • Vanilla JS</span>
+    </div>
+  </footer>
+
+  <!-- Toast Alert -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Logged in as Admin successfully!</span>
+  </div>
+
+  <script>
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function handleAddProductSubmit(event) {
+      event.preventDefault();
+      const code = document.getElementById('prodCode').value;
+      const name = document.getElementById('prodName').value;
+      const cat = document.getElementById('prodCategory').value;
+      const size = document.getElementById('prodSize').value;
+      const price = parseFloat(document.getElementById('prodPrice').value).toFixed(2);
+      const stock = document.getElementById('prodStock').value;
+
+      let badgeClass = 'badge-floor';
+      if (cat.includes('Washroom')) badgeClass = 'badge-washroom';
+      if (cat.includes('Elevation')) badgeClass = 'badge-elevation';
+
+      const tbody = document.getElementById('inventoryTbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong style="color:var(--primary);">${code}</strong></td>
+        <td>${name}</td>
+        <td><span class="badge-tag ${badgeClass}">${cat}</span></td>
+        <td>${size}</td>
+        <td>$${price}</td>
+        <td><strong style="color:#10b981;">${stock} Boxes</strong></td>
+        <td>0 Boxes</td>
+        <td>0 Boxes</td>
+        <td>
+          <div class="table-actions">
+            <button class="btn-tbl" onclick="editProductDemo('${code}')">Edit</button>
+            <button class="btn-tbl" onclick="transferStockDemo('${code}')">Transfer</button>
+          </div>
+        </td>
+      `;
+      tbody.prepend(tr);
+
+      closeModal('addProductModal');
+      showToast(`Product ${code} (${name}) added to inventory!`, 'success');
+      event.target.reset();
+    }
+
+    function handleAddCategorySubmit(event) {
+      event.preventDefault();
+      const catName = document.getElementById('catName').value;
+      closeModal('addCategoryModal');
+      showToast(`Category "${catName}" added successfully!`, 'success');
+      event.target.reset();
+    }
+
+    function triggerTransferDemo() {
+      showToast('Initiating stock transfer request between Warehouse A and Metro Outlet #1...', 'success');
+    }
+
+    function exportReportDemo() {
+      showToast('Exporting stock report to CSV...', 'success');
+    }
+
+    function editProductDemo(code) {
+      showToast(`Editing product details for Item ID: ${code}`, 'success');
+    }
+
+    function transferStockDemo(code) {
+      showToast(`Preparing stock transfer for Item ID: ${code}`, 'success');
+    }
+
+    function handleLogout() {
+      showToast('Logging out of Admin Panel...', 'success');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

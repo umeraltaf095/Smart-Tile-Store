@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register Account - Smart Tile Store & Inventory Management System">
+  <title>Register Account - Smart Tile Store & Inventory Management System</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/login.css">
+  <link rel="stylesheet" href="styles/register.css">
+</head>
+<body>
+
+  <!-- Ambient Glowing Background Elements -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Registration Main Wrapper -->
+  <div class="login-wrapper">
+
+    <!-- Left Side Hero Banner -->
+    <div class="login-banner">
+      <div class="brand-header">
+        <div class="brand-icon">
+          <!-- Custom Tile Grid Icon SVG -->
+          <svg viewBox="0 0 24 24">
+            <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+          </svg>
+        </div>
+        <div class="brand-name">SmartTile <span>Manager</span></div>
+      </div>
+
+      <div class="banner-content">
+        <h1 class="banner-title">Join Our Smart Tile Store Platform</h1>
+        <p class="banner-desc">
+          Register your customer account to browse premium tile categories, calculate exact box quantities, request custom quotations, and track order deliveries in real-time.
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span>Instant Sizing & Square Feet Tile Box Calculations</span>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span>Access Exclusive Catalog (Floor, Washroom, Elevation)</span>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span>Live Order Status Tracking & Delivery Updates</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner-footer">
+        &copy; 2026 Smart Tile Store System. Virtual University Final Project.
+      </div>
+    </div>
+
+    <!-- Right Side Registration Form -->
+    <div class="login-form-container">
+      
+      <div class="form-header">
+        <h2 class="form-title">Create Customer Account</h2>
+        <p class="form-subtitle">Fill in your details below to set up your new account</p>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+
+        <!-- Row 1: Full Name & Phone Number -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="fullName">Full Name</label>
+            <div class="input-wrapper">
+              <input 
+                type="text" 
+                id="fullName" 
+                class="form-input" 
+                placeholder="John Doe" 
+                required
+                autocomplete="name"
+              >
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="phoneInput">Phone Number</label>
+            <div class="input-wrapper">
+              <input 
+                type="tel" 
+                id="phoneInput" 
+                class="form-input" 
+                placeholder="+92 300 1234567" 
+                required
+                autocomplete="tel"
+              >
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email Address Input -->
+        <div class="form-group">
+          <label class="form-label" for="emailInput">Email Address</label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              id="emailInput" 
+              class="form-input" 
+              placeholder="name@example.com" 
+              required
+              autocomplete="email"
+            >
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Category Dropdown -->
+        <div class="form-group">
+          <label class="form-label" for="customerType">Customer Category</label>
+          <div class="input-wrapper">
+            <select id="customerType" class="form-input" required>
+              <option value="" disabled selected>Select Customer Type...</option>
+              <option value="homeowner">Homeowner / Individual Buyer</option>
+              <option value="architect">Architect / Interior Designer</option>
+              <option value="contractor">Building Contractor / Builder</option>
+              <option value="wholesaler">Tile Wholesaler / Dealer</option>
+            </select>
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Password & Confirm Password -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="passwordInput">Password</label>
+            <div class="input-wrapper">
+              <input 
+                type="password" 
+                id="passwordInput" 
+                class="form-input" 
+                placeholder="••••••••••••" 
+                required
+                oninput="evaluatePasswordStrength()"
+              >
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <button type="button" class="password-toggle" onclick="togglePasswordVisibility('passwordInput', 'eyeIcon1')" title="Toggle password visibility">
+                <svg id="eyeIcon1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="confirmPasswordInput">Confirm Password</label>
+            <div class="input-wrapper">
+              <input 
+                type="password" 
+                id="confirmPasswordInput" 
+                class="form-input" 
+                placeholder="••••••••••••" 
+                required
+              >
+              <div class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Password Strength Meter -->
+        <div class="password-strength">
+          <div class="strength-bar-bg">
+            <div class="strength-bar-fill" id="strengthBar"></div>
+          </div>
+          <div class="strength-text">
+            <span>Password Strength:</span>
+            <span id="strengthLabel" style="font-weight:600;">None</span>
+          </div>
+        </div>
+
+        <br>
+
+        <!-- Terms Agreement Checkbox -->
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="agreeTerms" class="checkbox-input" required>
+            <span class="checkbox-custom">
+              <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            I agree to the <a href="#" class="forgot-link" onclick="event.preventDefault(); showToast('Terms & Conditions modal preview', 'success');">Terms & Conditions</a>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" id="btnRegister">
+          <span>Create Customer Account</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Redirect to Login -->
+      <div class="register-prompt">
+        Already have an account? <a href="login.html">Log In Here</a>
+      </div>
+
+      <!-- Viva Demo Autofill Button -->
+      <div class="viva-demo-box">
+        <div class="viva-demo-title">
+          <span>⚡ Viva Demo Quick Auto-Fill</span>
+          <small>Click to fill form</small>
+        </div>
+        <div class="viva-demo-pills">
+          <button type="button" class="demo-pill" style="width:100%;" onclick="autoFillSampleData()">✨ Auto-Fill Sample Customer Data</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Account registered successfully!</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        input.type = 'password';
+        icon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    }
+
+    function evaluatePasswordStrength() {
+      const val = document.getElementById('passwordInput').value;
+      const bar = document.getElementById('strengthBar');
+      const label = document.getElementById('strengthLabel');
+
+      if (val.length === 0) {
+        bar.className = 'strength-bar-fill';
+        label.innerText = 'None';
+        label.style.color = 'var(--text-dim)';
+      } else if (val.length < 6) {
+        bar.className = 'strength-bar-fill strength-weak';
+        label.innerText = 'Weak';
+        label.style.color = '#ef4444';
+      } else if (val.length < 10) {
+        bar.className = 'strength-bar-fill strength-medium';
+        label.innerText = 'Medium';
+        label.style.color = '#f59e0b';
+      } else {
+        bar.className = 'strength-bar-fill strength-strong';
+        label.innerText = 'Strong';
+        label.style.color = '#10b981';
+      }
+    }
+
+    function autoFillSampleData() {
+      document.getElementById('fullName').value = 'Ahmed Hassan';
+      document.getElementById('phoneInput').value = '+92 300 9876543';
+      document.getElementById('emailInput').value = 'ahmed.hassan@example.com';
+      document.getElementById('customerType').value = 'homeowner';
+      document.getElementById('passwordInput').value = 'TileSmartPass2026!';
+      document.getElementById('confirmPasswordInput').value = 'TileSmartPass2026!';
+      document.getElementById('agreeTerms').checked = true;
+
+      evaluatePasswordStrength();
+      showToast('Sample registration data auto-filled!', 'success');
+    }
+
+    function handleRegisterSubmit(event) {
+      event.preventDefault();
+      const pass = document.getElementById('passwordInput').value;
+      const confirmPass = document.getElementById('confirmPasswordInput').value;
+      const btnRegister = document.getElementById('btnRegister');
+
+      if (pass !== confirmPass) {
+        showToast('Passwords do not match! Please check again.', 'error');
+        return;
+      }
+
+      btnRegister.disabled = true;
+      btnRegister.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10"></path>
+        </svg>
+        <span>Creating Account...</span>
+      `;
+
+      setTimeout(() => {
+        btnRegister.disabled = false;
+        btnRegister.innerHTML = `
+          <span>Create Customer Account</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        `;
+
+        showToast('Account created successfully! Redirecting to login...', 'success');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1800);
+      }, 1200);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

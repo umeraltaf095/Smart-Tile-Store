@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Tile Store & Inventory Management System - Customer Landing Page & Catalog Showcase">
+  <title>Home - Smart Tile Store & Inventory Management System</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+
+  <!-- Ambient Glowing Background Elements -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" style="text-decoration: none;">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Manager</span></div>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link active">Home</a></li>
+          <li><a href="#categories" class="nav-link">Tile Categories</a></li>
+          <li><a href="#featured" class="nav-link">Featured Tiles</a></li>
+          <li><a href="#calculator" class="nav-link">Tile Calculator</a></li>
+          <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Customer Logged-in Profile Badge -->
+      <div class="user-profile-badge">
+        <div class="user-avatar">C</div>
+        <div class="user-info">
+          <span class="user-name">Welcome, Customer</span>
+          <span class="user-role-tag">Online Buyer</span>
+        </div>
+        <button class="btn-logout" title="Log Out" onclick="handleLogout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-wrapper">
+    <div class="hero-content">
+      <div class="section-tag">Smart Tile Retail & Inventory System</div>
+      <h1 class="hero-title">Transform Your Space With <span>Architectural Tiles</span></h1>
+      <p class="hero-text">
+        Explore premium Floor, Washroom, and Front Elevation tiles with real-time outlet stock availability, custom quotation requests, and automated tile box calculation.
+      </p>
+      
+      <div class="hero-actions">
+        <a href="#featured" class="btn-submit" style="width: auto; padding: 14px 28px; text-decoration: none;">
+          <span>Explore Catalog</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+
+        <a href="#calculator" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="16" y1="14" x2="16" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M8 18h.01"></path>
+          </svg>
+          <span>Tile Box Calculator</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero Visual Card Showcase -->
+    <div class="hero-visual">
+      <div class="tile-showcase-card">
+        <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 16px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+          <span>POPULAR FINISHES</span>
+          <span style="color: var(--accent-cyan); font-size: 0.8rem;">Live Stock Sync</span>
+        </div>
+        <div class="showcase-grid">
+          <div class="tile-preview-item">
+            <svg width="100%" height="100%" style="background: linear-gradient(45deg, #1e293b, #334155);" viewBox="0 0 100 100">
+              <rect x="5" y="5" width="42" height="42" fill="#3b82f6" opacity="0.3" rx="4"/>
+              <rect x="53" y="5" width="42" height="42" fill="#06b6d4" opacity="0.3" rx="4"/>
+              <rect x="5" y="53" width="42" height="42" fill="#8b5cf6" opacity="0.3" rx="4"/>
+              <rect x="53" y="53" width="42" height="42" fill="#3b82f6" opacity="0.5" rx="4"/>
+            </svg>
+            <div class="tile-tag">Floor Tile (Polished)</div>
+          </div>
+
+          <div class="tile-preview-item">
+            <svg width="100%" height="100%" style="background: linear-gradient(135deg, #0f172a, #1e293b);" viewBox="0 0 100 100">
+              <pattern id="hex" width="20" height="20" patternUnits="userSpaceOnUse">
+                <polygon points="10,0 20,5 20,15 10,20 0,15 0,5" fill="none" stroke="#64748b" stroke-width="1"/>
+              </pattern>
+              <rect width="100%" height="100%" fill="url(#hex)"/>
+            </svg>
+            <div class="tile-tag">Washroom Anti-Skid</div>
+          </div>
+
+          <div class="tile-preview-item">
+            <svg width="100%" height="100%" style="background: linear-gradient(180deg, #1e1b4b, #311b92);" viewBox="0 0 100 100">
+              <rect x="0" y="0" width="100" height="20" fill="#4338ca" opacity="0.4"/>
+              <rect x="0" y="25" width="100" height="20" fill="#6366f1" opacity="0.4"/>
+              <rect x="0" y="50" width="100" height="20" fill="#4338ca" opacity="0.4"/>
+              <rect x="0" y="75" width="100" height="20" fill="#6366f1" opacity="0.4"/>
+            </svg>
+            <div class="tile-tag">3D Front Elevation</div>
+          </div>
+
+          <div class="tile-preview-item">
+            <svg width="100%" height="100%" style="background: linear-gradient(135deg, #111827, #1f2937);" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+              <circle cx="50" cy="50" r="20" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0.5"/>
+            </svg>
+            <div class="tile-tag">Royal Marble Pattern</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tile Categories Section -->
+  <section class="section-container" id="categories">
+    <div class="section-header">
+      <span class="section-tag">Tile Categories</span>
+      <h2 class="section-title">Designed For Every Surface</h2>
+      <p class="section-desc">Browse our curated selection of high-grade porcelain, ceramic, and natural stone tiles categorized for optimal utility.</p>
+    </div>
+
+    <div class="category-grid">
+      <!-- Category 1: Floor Tiles -->
+      <div class="category-card">
+        <div>
+          <div class="category-icon-box">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="12" y1="3" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <h3 class="category-title">Floor Tiles</h3>
+          <p class="category-desc">
+            Heavy-duty porcelain and marble finish tiles crafted for living rooms, hallways, and high-traffic commercial spaces.
+          </p>
+        </div>
+        <a href="#featured" class="category-link">
+          <span>Explore Floor Collection</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Category 2: Washroom Tiles -->
+      <div class="category-card">
+        <div>
+          <div class="category-icon-box" style="background: rgba(6, 182, 212, 0.12); border-color: rgba(6, 182, 212, 0.3); color: var(--accent-cyan);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+          </div>
+          <h3 class="category-title">Washroom Tiles</h3>
+          <p class="category-desc">
+            Waterproof, anti-skid floor tiles and glossy moisture-resistant wall tiles designed for modern bathrooms.
+          </p>
+        </div>
+        <a href="#featured" class="category-link" style="color: var(--accent-cyan);">
+          <span>Explore Washroom Collection</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Category 3: Front Elevation Tiles -->
+      <div class="category-card">
+        <div>
+          <div class="category-icon-box" style="background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3); color: var(--accent-gold);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <h3 class="category-title">Front Elevation Tiles</h3>
+          <p class="category-desc">
+            Weather-proof textured 3D stone tiles and brick designs engineered for outdoor exterior walls and building fronts.
+          </p>
+        </div>
+        <a href="#featured" class="category-link" style="color: var(--accent-gold);">
+          <span>Explore Elevation Collection</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="section-container" id="featured">
+    <div class="section-header">
+      <span class="section-tag">Featured Products</span>
+      <h2 class="section-title">Popular Tile Selection</h2>
+      <p class="section-desc">Inspect exact specifications, prices per sq.ft, and live stock location availability across outlets.</p>
+    </div>
+
+    <div class="product-grid">
+
+      <!-- Product Card 1 -->
+      <div class="product-card">
+        <div class="product-thumb">
+          <span class="product-badge">Floor Tile</span>
+          <span class="stock-badge">140 Boxes (Main Wh)</span>
+          <svg width="100%" height="100%" viewBox="0 0 200 200" style="background:#1e293b;">
+            <rect width="100%" height="100%" fill="#0f172a"/>
+            <path d="M0,0 L200,200 M200,0 L0,200" stroke="#334155" stroke-width="2"/>
+            <rect x="40" y="40" width="120" height="120" fill="#3b82f6" opacity="0.2" rx="8"/>
+          </svg>
+        </div>
+        <div class="product-body">
+          <div>
+            <h3 class="product-title">Carrara White Porcelain</h3>
+            <div class="product-meta">
+              <span>Size: 60 x 120 cm</span>
+              <span>Code: T-FL-101</span>
+            </div>
+          </div>
+          <div class="product-price-row">
+            <div class="product-price">$4.50 <span>/ sq.ft</span></div>
+            <button class="btn-icon" onclick="showToast('Quotation requested for Carrara White Porcelain', 'success')">
+              <span>Order / Quote</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 2 -->
+      <div class="product-card">
+        <div class="product-thumb">
+          <span class="product-badge" style="background: var(--accent-gold);">Elevation Tile</span>
+          <span class="stock-badge">85 Boxes (Outlet A)</span>
+          <svg width="100%" height="100%" viewBox="0 0 200 200" style="background:#1f2937;">
+            <rect x="10" y="20" width="180" height="30" fill="#d97706" opacity="0.4" rx="4"/>
+            <rect x="10" y="60" width="180" height="30" fill="#f59e0b" opacity="0.4" rx="4"/>
+            <rect x="10" y="100" width="180" height="30" fill="#d97706" opacity="0.4" rx="4"/>
+            <rect x="10" y="140" width="180" height="30" fill="#f59e0b" opacity="0.4" rx="4"/>
+          </svg>
+        </div>
+        <div class="product-body">
+          <div>
+            <h3 class="product-title">Rustic Slate 3D Stone</h3>
+            <div class="product-meta">
+              <span>Size: 30 x 60 cm</span>
+              <span>Code: T-EL-304</span>
+            </div>
+          </div>
+          <div class="product-price-row">
+            <div class="product-price">$5.20 <span>/ sq.ft</span></div>
+            <button class="btn-icon" onclick="showToast('Quotation requested for Rustic Slate 3D Stone', 'success')">
+              <span>Order / Quote</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 3 -->
+      <div class="product-card">
+        <div class="product-thumb">
+          <span class="product-badge" style="background: var(--accent-cyan);">Washroom Tile</span>
+          <span class="stock-badge">210 Boxes (Main Wh)</span>
+          <svg width="100%" height="100%" viewBox="0 0 200 200" style="background:#0f172a;">
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#06b6d4" stroke-width="4" opacity="0.4"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3b82f6" stroke-width="4" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="product-body">
+          <div>
+            <h3 class="product-title">Royal Blue Anti-Skid</h3>
+            <div class="product-meta">
+              <span>Size: 30 x 30 cm</span>
+              <span>Code: T-WS-208</span>
+            </div>
+          </div>
+          <div class="product-price-row">
+            <div class="product-price">$3.80 <span>/ sq.ft</span></div>
+            <button class="btn-icon" onclick="showToast('Quotation requested for Royal Blue Anti-Skid', 'success')">
+              <span>Order / Quote</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Card 4 -->
+      <div class="product-card">
+        <div class="product-thumb">
+          <span class="product-badge">Floor Tile</span>
+          <span class="stock-badge">95 Boxes (Outlet B)</span>
+          <svg width="100%" height="100%" viewBox="0 0 200 200" style="background:#1e1b4b;">
+            <polygon points="100,20 180,180 20,180" fill="#8b5cf6" opacity="0.3"/>
+          </svg>
+        </div>
+        <div class="product-body">
+          <div>
+            <h3 class="product-title">Travertine Gold Polished</h3>
+            <div class="product-meta">
+              <span>Size: 80 x 80 cm</span>
+              <span>Code: T-FL-109</span>
+            </div>
+          </div>
+          <div class="product-price-row">
+            <div class="product-price">$6.10 <span>/ sq.ft</span></div>
+            <button class="btn-icon" onclick="showToast('Quotation requested for Travertine Gold', 'success')">
+              <span>Order / Quote</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Tile Box Calculator Section -->
+  <section class="section-container" id="calculator">
+    <div class="calculator-box">
+      <div class="section-header" style="margin-bottom: 32px;">
+        <span class="section-tag">Interactive Sizing Tool</span>
+        <h2 class="section-title">Automated Tile Box Calculator</h2>
+        <p class="section-desc">Calculate exact square footage, recommended waste buffer, and number of boxes required for your room project.</p>
+      </div>
+
+      <div class="calc-grid">
+        <!-- Input Form -->
+        <div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="roomLength">Room Length (Feet)</label>
+              <input type="number" id="roomLength" class="form-input" value="15" min="1" oninput="calculateTileBoxes()">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="roomWidth">Room Width (Feet)</label>
+              <input type="number" id="roomWidth" class="form-input" value="12" min="1" oninput="calculateTileBoxes()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="tileSelect">Selected Tile Size</label>
+            <select id="tileSelect" class="form-input" onchange="calculateTileBoxes()">
+              <option value="60x120" data-coverage="15.5" data-price="4.50">Carrara White (60x120 cm - 15.5 sq.ft/box)</option>
+              <option value="30x60" data-coverage="12.0" data-price="5.20">Rustic Slate (30x60 cm - 12.0 sq.ft/box)</option>
+              <option value="30x30" data-coverage="10.0" data-price="3.80">Royal Blue (30x30 cm - 10.0 sq.ft/box)</option>
+              <option value="80x80" data-coverage="14.0" data-price="6.10">Travertine Gold (80x80 cm - 14.0 sq.ft/box)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="wasteBuffer">Waste Buffer Margin (%)</label>
+            <select id="wasteBuffer" class="form-input" onchange="calculateTileBoxes()">
+              <option value="5">5% Standard Cutting Margin</option>
+              <option value="10" selected>10% Recommended (Diagonal/Pattern)</option>
+              <option value="15">15% High Waste Allowance</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Calculated Output Results -->
+        <div class="calc-output-box">
+          <div style="font-weight:700; font-size:1rem; margin-bottom:16px; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Estimation Result</span>
+          </div>
+
+          <div class="calc-stat-group">
+            <span class="calc-stat-label">Net Surface Area:</span>
+            <span class="calc-stat-value" id="resNetArea">180 Sq.Ft</span>
+          </div>
+
+          <div class="calc-stat-group">
+            <span class="calc-stat-label">Area + Waste Buffer:</span>
+            <span class="calc-stat-value" id="resTotalArea">198 Sq.Ft</span>
+          </div>
+
+          <div class="calc-stat-group">
+            <span class="calc-stat-label">Tile Boxes Required:</span>
+            <span class="calc-stat-value" id="resBoxCount" style="color:var(--primary);">13 Boxes</span>
+          </div>
+
+          <div class="calc-stat-group">
+            <span class="calc-stat-label">Estimated Total Price:</span>
+            <span class="calc-stat-value" id="resTotalPrice" style="color:var(--accent-gold);">$891.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Manager</span></div>
+        </div>
+        <p>
+          Complete Web-based Tile Store & Multi-Outlet Inventory Tracking System for floor, washroom, and elevation tiles.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home Landing</a></li>
+          <li><a href="#categories">Tile Categories</a></li>
+          <li><a href="#featured">Featured Tiles</a></li>
+          <li><a href="#calculator">Sizing Calculator</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Access</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Login Portal</a></li>
+          <li><a href="register.html">Register Customer</a></li>
+          <li><a href="admin-dashboard.html">Admin Dashboard</a></li>
+          <li><a href="contact.html">Contact Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact & Outlets</h4>
+        <ul class="footer-links">
+          <li>Main Warehouse A, Block 4</li>
+          <li>Outlet Store 1, Metro Plaza</li>
+          <li>Email: support@smarttile.com</li>
+          <li>Phone: +92 42 111 845 378</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smart Tile Store System. Virtual University Final Project.</span>
+      <span>HTML5 • CSS3 • Vanilla JS</span>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Action performed successfully!</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    function calculateTileBoxes() {
+      const length = parseFloat(document.getElementById('roomLength').value) || 0;
+      const width = parseFloat(document.getElementById('roomWidth').value) || 0;
+      const wasteMargin = parseFloat(document.getElementById('wasteBuffer').value) || 10;
+      
+      const selectElem = document.getElementById('tileSelect');
+      const selectedOption = selectElem.options[selectElem.selectedIndex];
+      const sqftPerBox = parseFloat(selectedOption.getAttribute('data-coverage')) || 15.5;
+      const pricePerSqFt = parseFloat(selectedOption.getAttribute('data-price')) || 4.50;
+
+      const netArea = length * width;
+      const totalArea = netArea * (1 + (wasteMargin / 100));
+      const boxesNeeded = Math.ceil(totalArea / sqftPerBox);
+      const estimatedPrice = totalArea * pricePerSqFt;
+
+      document.getElementById('resNetArea').innerText = `${netArea.toFixed(1)} Sq.Ft`;
+      document.getElementById('resTotalArea').innerText = `${totalArea.toFixed(1)} Sq.Ft`;
+      document.getElementById('resBoxCount').innerText = `${boxesNeeded} Boxes`;
+      document.getElementById('resTotalPrice').innerText = `$${estimatedPrice.toFixed(2)}`;
+    }
+
+    function handleLogout() {
+      showToast('Logged out successfully! Returning to login page...', 'success');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+
+    // Run initial calculation on page load
+    window.addEventListener('DOMContentLoaded', calculateTileBoxes);
+  </script>
+</body>
+</html>

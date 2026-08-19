@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Tile Store & Inventory Management System - Secure Portal Login for Admins & Customers">
+  <title>Login - Smart Tile Store & Inventory Management System</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/login.css">
+</head>
+<body>
+
+  <!-- Ambient Glowing Background Elements -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Login Main Wrapper -->
+  <div class="login-wrapper">
+
+    <!-- Left Side Hero Banner -->
+    <div class="login-banner">
+      <div class="brand-header">
+        <div class="brand-icon">
+          <!-- Custom Tile Grid Icon SVG -->
+          <svg viewBox="0 0 24 24">
+            <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+          </svg>
+        </div>
+        <div class="brand-name">SmartTile <span>Manager</span></div>
+      </div>
+
+      <div class="banner-content">
+        <h1 class="banner-title">Smart Tile Store & Inventory Portal</h1>
+        <p class="banner-desc">
+          Automated multi-outlet inventory tracking, tile catalog management, custom area calculations, and seamless customer order fulfillment.
+        </p>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span>Real-time Warehouse & Outlet Stock Transfers</span>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span>Floor, Washroom & Elevation Tile Categorization</span>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <span>Automated Sales Reports & Quotation System</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner-footer">
+        &copy; 2026 Smart Tile Store System. Virtual University Final Project.
+      </div>
+    </div>
+
+    <!-- Right Side Authentication Form -->
+    <div class="login-form-container">
+      
+      <div class="form-header">
+        <h2 class="form-title" id="formTitle">Sign In to Your Account</h2>
+        <p class="form-subtitle" id="formSubtitle">Select your role and enter your credentials to access the dashboard</p>
+      </div>
+
+      <!-- Role Selector Switcher -->
+      <div class="role-tabs" role="tablist">
+        <button type="button" class="role-btn active" id="btnCustomerRole" onclick="switchRole('customer')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Customer Login
+        </button>
+
+        <button type="button" class="role-btn" id="btnAdminRole" onclick="switchRole('admin')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          Admin Login
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+        <input type="hidden" id="userRoleInput" value="customer">
+
+        <!-- Email Input -->
+        <div class="form-group">
+          <label class="form-label" for="emailInput">Email or Username</label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="emailInput" 
+              class="form-input" 
+              placeholder="name@example.com" 
+              required
+              autocomplete="email"
+            >
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group">
+          <label class="form-label" for="passwordInput">Password</label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              id="passwordInput" 
+              class="form-input" 
+              placeholder="••••••••••••" 
+              required
+            >
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" title="Toggle password visibility">
+              <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe" class="checkbox-input">
+            <span class="checkbox-custom">
+              <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            Remember me
+          </label>
+
+          <a href="#" onclick="handleForgotPassword(event)" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" id="btnSubmit">
+          <span>Sign In to Dashboard</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Customer Registration Prompt -->
+      <div class="register-prompt" id="registerPrompt">
+        Don't have a customer account? <a href="register.html">Register Account</a>
+      </div>
+
+      <!-- Viva Demo Credentials Quick Auto-fill Widget -->
+      <div class="viva-demo-box">
+        <div class="viva-demo-title">
+          <span>⚡ Viva Demo Quick Auto-Fill</span>
+          <small>Click to test</small>
+        </div>
+        <div class="viva-demo-pills">
+          <button type="button" class="demo-pill" onclick="autoFillDemo('admin')">🔑 Admin Demo</button>
+          <button type="button" class="demo-pill" onclick="autoFillDemo('customer')">🛒 Customer Demo</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Logged in successfully! Redirecting...</span>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    let activeRole = 'customer';
+
+    function switchRole(role) {
+      activeRole = role;
+      document.getElementById('userRoleInput').value = role;
+
+      const customerBtn = document.getElementById('btnCustomerRole');
+      const adminBtn = document.getElementById('btnAdminRole');
+      const registerPrompt = document.getElementById('registerPrompt');
+      const formSubtitle = document.getElementById('formSubtitle');
+
+      if (role === 'admin') {
+        adminBtn.classList.add('active');
+        customerBtn.classList.remove('active');
+        formSubtitle.innerText = 'Admin Authentication for Inventory & Store Management';
+        registerPrompt.style.display = 'none'; // Admins do not self-register
+      } else {
+        customerBtn.classList.add('active');
+        adminBtn.classList.remove('active');
+        formSubtitle.innerText = 'Customer Portal - Access catalog, track orders & requests';
+        registerPrompt.style.display = 'block';
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('passwordInput');
+      const eyeIcon = document.getElementById('eyeIcon');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    }
+
+    function autoFillDemo(role) {
+      switchRole(role);
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+
+      if (role === 'admin') {
+        emailInput.value = 'admin@smarttile.com';
+        passwordInput.value = 'admin123';
+        showToast('Admin demo credentials populated!', 'success');
+      } else {
+        emailInput.value = 'customer@smarttile.com';
+        passwordInput.value = 'customer123';
+        showToast('Customer demo credentials populated!', 'success');
+      }
+    }
+
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      const btnSubmit = document.getElementById('btnSubmit');
+
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
+          <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10"></path>
+        </svg>
+        <span>Authenticating...</span>
+      `;
+
+      setTimeout(() => {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `
+          <span>Sign In to Dashboard</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        `;
+
+        if (activeRole === 'admin') {
+          showToast('Welcome Admin! Redirecting to Admin Dashboard...', 'success');
+          setTimeout(() => { window.location.href = 'admin-dashboard.html'; }, 1500);
+        } else {
+          showToast('Login successful! Redirecting to Store Landing Page...', 'success');
+          setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+        }
+      }, 1000);
+    }
+
+    function handleForgotPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      if (!email) {
+        showToast('Please enter your email address first!', 'error');
+      } else {
+        showToast(`Password reset link sent to ${email}`, 'success');
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

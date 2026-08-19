@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Us - Smart Tile Store & Inventory Management System">
+  <title>Contact Us - Smart Tile Store & Inventory Management System</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/contact.css">
+</head>
+<body>
+
+  <!-- Ambient Glowing Background Elements -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" style="text-decoration: none;">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Manager</span></div>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="index.html#categories" class="nav-link">Tile Categories</a></li>
+          <li><a href="index.html#featured" class="nav-link">Featured Tiles</a></li>
+          <li><a href="index.html#calculator" class="nav-link">Tile Calculator</a></li>
+          <li><a href="contact.html" class="nav-link active">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Customer Logged-in Profile Badge -->
+      <div class="user-profile-badge">
+        <div class="user-avatar">C</div>
+        <div class="user-info">
+          <span class="user-name">Welcome, Customer</span>
+          <span class="user-role-tag">Online Buyer</span>
+        </div>
+        <button class="btn-logout" title="Log Out" onclick="handleLogout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contact Us Main Section -->
+  <section class="section-container">
+    <div class="section-header">
+      <span class="section-tag">Static Contact Information</span>
+      <h2 class="section-title">Store Locations & Outlets</h2>
+      <p class="section-desc">Explore central warehouse pickup addresses, store outlet locations, direct phone lines, and operating hours.</p>
+    </div>
+
+    <!-- 3-Column Static Location Cards -->
+    <div class="category-grid" style="margin-bottom: 40px;">
+      
+      <!-- Outlet Card 1: Central Warehouse -->
+      <div class="outlet-card">
+        <div class="outlet-header">
+          <div class="outlet-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h3 class="outlet-title">Main Central Warehouse</h3>
+            <span style="font-size:0.75rem; color:var(--accent-cyan); font-weight:600;">Stock Pickup & Bulk Orders</span>
+          </div>
+        </div>
+        <ul class="outlet-details">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Plot 42, Industrial Zone, Warehouse Hub, Lahore
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            +92 42 111 845 378 (Ext 101)
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            warehouse@smarttile.com
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Mon - Sat: 8:00 AM - 7:00 PM
+          </li>
+        </ul>
+      </div>
+
+      <!-- Outlet Card 2: Metro Showroom -->
+      <div class="outlet-card">
+        <div class="outlet-header">
+          <div class="outlet-icon" style="background:rgba(245, 158, 11, 0.12); color:var(--accent-gold);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="outlet-title">Metro Showroom Outlet #1</h3>
+            <span style="font-size:0.75rem; color:var(--accent-gold); font-weight:600;">Display Center & Retail Store</span>
+          </div>
+        </div>
+        <ul class="outlet-details">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Shop 14-16, Metro Plaza, Main Blvd, Lahore
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            +92 42 357 8901
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            metro.outlet@smarttile.com
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Mon - Sat: 10:00 AM - 10:00 PM
+          </li>
+        </ul>
+      </div>
+
+      <!-- Outlet Card 3: Design Hub Outlet -->
+      <div class="outlet-card">
+        <div class="outlet-header">
+          <div class="outlet-icon" style="background:rgba(139, 92, 246, 0.12); color:var(--accent-purple);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="outlet-title">Design Hub Outlet #2</h3>
+            <span style="font-size:0.75rem; color:var(--accent-purple); font-weight:600;">Architect & Contractor Lounge</span>
+          </div>
+        </div>
+        <ul class="outlet-details">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Suite 8, Architecture Heights, Phase 5, Lahore
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            +92 42 357 8902
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            design.hub@smarttile.com
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Mon - Sat: 10:00 AM - 9:00 PM
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Static Business Hours & Support Banner -->
+    <div class="calculator-box" style="margin-bottom: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <h3 style="font-family:var(--font-heading); font-size:1.4rem; font-weight:700; margin-bottom:6px;">Customer Service & Support Hotline</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">For order tracking, quotation assistance, or stock availability across warehouses.</p>
+        </div>
+
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+          <div>
+            <div style="font-size:0.78rem; color:var(--text-dim); text-transform:uppercase; font-weight:600;">UAN Toll Free</div>
+            <div style="font-family:var(--font-heading); font-size:1.25rem; font-weight:700; color:var(--primary);">+92 42 111 845 378</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem; color:var(--text-dim); text-transform:uppercase; font-weight:600;">Email Support</div>
+            <div style="font-family:var(--font-heading); font-size:1.25rem; font-weight:700; color:var(--accent-cyan);">support@smarttile.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Accordion Section -->
+  <section class="section-container" style="padding-top:0;">
+    <div class="section-header">
+      <span class="section-tag">Frequently Asked Questions</span>
+      <h2 class="section-title">Store & Policy Information</h2>
+      <p class="section-desc">Quick answers regarding tile order processes, measurement guidelines, and warehouse stock transfers.</p>
+    </div>
+
+    <div class="faq-list">
+      
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>How does the system calculate total tile box requirements?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="faq-answer">
+          Our built-in tile box calculator multiplies your room Length x Width to get the net square footage, adds a user-selected cutting waste buffer (5% to 15%), and divides by the coverage capacity of your chosen tile size to output exact box numbers.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Can stock be transferred between central warehouses and store outlets?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="faq-answer">
+          Yes! The Admin inventory module tracks unique Item IDs across multiple outlets and warehouses. Admins can initiate stock transfers between locations to satisfy customer purchase orders.
+        </div>
+      </div>
+
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>What is the difference between Floor, Washroom, and Front Elevation tiles?</span>
+          <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+        <div class="faq-answer">
+          Floor tiles are high PEI-rated polished/porcelain tiles built for heavy foot traffic. Washroom tiles feature anti-skid water-resistant textures for floors and glossy glazed walls. Front Elevation tiles are weather-resistant 3D textured tiles designed for exterior facades.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Manager</span></div>
+        </div>
+        <p>Complete Web-based Tile Store & Multi-Outlet Inventory Tracking System for floor, washroom, and elevation tiles.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home Landing</a></li>
+          <li><a href="index.html#categories">Tile Categories</a></li>
+          <li><a href="index.html#featured">Featured Tiles</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Access</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Login Portal</a></li>
+          <li><a href="register.html">Register Customer</a></li>
+          <li><a href="admin-dashboard.html">Admin Dashboard</a></li>
+          <li><a href="contact.html">Contact Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact & Outlets</h4>
+        <ul class="footer-links">
+          <li>Main Warehouse A, Block 4</li>
+          <li>Outlet Store 1, Metro Plaza</li>
+          <li>Email: support@smarttile.com</li>
+          <li>Phone: +92 42 111 845 378</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smart Tile Store System. Virtual University Final Project.</span>
+      <span>HTML5 • CSS3 • Vanilla JS</span>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Logged out successfully!</span>
+  </div>
+
+  <script>
+    function toggleFaq(element) {
+      element.classList.toggle('active');
+    }
+
+    function handleLogout() {
+      showToast('Logged out successfully! Returning to login...', 'success');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

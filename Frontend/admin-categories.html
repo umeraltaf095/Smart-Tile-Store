@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manage Tile Categories - Smart Tile Store & Inventory Management System">
+  <title>Manage Tile Categories - Admin Panel</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/index.css">
+  <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glow -->
+  <div class="bg-ambient">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="tile-pattern"></div>
+  </div>
+
+  <!-- Sticky Admin Navigation Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="admin-dashboard.html" style="text-decoration: none;">
+        <div class="brand-header">
+          <div class="brand-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary));">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Admin Panel</span></div>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html" class="nav-link">Dashboard</a></li>
+          <li><a href="admin-categories.html" class="nav-link active">Manage Categories</a></li>
+          <li><a href="admin-products.html" class="nav-link">Manage Products</a></li>
+          <li><a href="admin-dashboard.html#inventoryTable" class="nav-link">Inventory Tracking</a></li>
+          <li><a href="index.html" target="_blank" class="nav-link">Preview Storefront ↗</a></li>
+        </ul>
+      </nav>
+
+      <!-- Admin Profile Badge -->
+      <div class="user-profile-badge" style="border-color: rgba(139, 92, 246, 0.4);">
+        <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary));">A</div>
+        <div class="user-info">
+          <span class="user-name">Welcome, Admin</span>
+          <span class="user-role-tag" style="color:var(--accent-gold);">System Manager</span>
+        </div>
+        <button class="btn-logout" title="Log Out" onclick="handleLogout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Categories Management Section -->
+  <section class="section-container">
+    
+    <!-- Page Header & Action Button -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px;">
+      <div>
+        <h2 style="font-family:var(--font-heading); font-size:2rem; font-weight:700;">Manage Tile Categories</h2>
+        <p style="color:var(--text-muted); font-size:0.92rem;">Create, update, and organize tile product classifications for store outlets & inventory.</p>
+      </div>
+      <button class="btn-admin-action" onclick="openModal('addCategoryModal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add New Category
+      </button>
+    </div>
+
+    <!-- Quick Stats Summary -->
+    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(59, 130, 246, 0.15); color:var(--primary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value" id="totalCategoryCount">5</span>
+          <span class="stat-label">Active Categories</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(6, 182, 212, 0.15); color:var(--accent-cyan);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">148</span>
+          <span class="stat-label">Categorized Tile Items</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">100%</span>
+          <span class="stat-label">Catalog Synchronized</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Table Card -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+          Tile Product Categories List
+        </h3>
+        <span style="font-size:0.85rem; color:var(--text-muted);">Manage Category Details & Icons</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Category Code</th>
+              <th>Category Name</th>
+              <th>Description / Utility</th>
+              <th>Linked Products</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="categoryTbody">
+            
+            <!-- Row 1 -->
+            <tr id="catRow-1">
+              <td><strong style="color:var(--primary);">CAT-FL-01</strong></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+                  <span style="padding:6px; background:rgba(59, 130, 246, 0.15); border-radius:6px; color:var(--primary); font-size:0.9rem;">🏢</span>
+                  Floor Tiles
+                </div>
+              </td>
+              <td>Polished porcelain, marble texture, and vitrified indoor floor tiles.</td>
+              <td><span class="badge-tag badge-floor">52 Items</span></td>
+              <td><span class="badge-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">Active</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditCategoryModal('CAT-FL-01', 'Floor Tiles', 'Polished porcelain, marble texture, and vitrified indoor floor tiles.')" title="Edit Category">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteCategoryDemo('catRow-1', 'Floor Tiles')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Category">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr id="catRow-2">
+              <td><strong style="color:var(--primary);">CAT-WS-02</strong></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+                  <span style="padding:6px; background:rgba(6, 182, 212, 0.15); border-radius:6px; color:var(--accent-cyan); font-size:0.9rem;">🚿</span>
+                  Washroom Tiles
+                </div>
+              </td>
+              <td>Anti-skid matte floor tiles & high-gloss waterproof ceramic wall tiles.</td>
+              <td><span class="badge-tag badge-washroom">42 Items</span></td>
+              <td><span class="badge-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">Active</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditCategoryModal('CAT-WS-02', 'Washroom Tiles', 'Anti-skid matte floor tiles & high-gloss waterproof ceramic wall tiles.')" title="Edit Category">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteCategoryDemo('catRow-2', 'Washroom Tiles')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Category">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr id="catRow-3">
+              <td><strong style="color:var(--primary);">CAT-EL-03</strong></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+                  <span style="padding:6px; background:rgba(245, 158, 11, 0.15); border-radius:6px; color:var(--accent-gold); font-size:0.9rem;">🏛️</span>
+                  Front Elevation Tiles
+                </div>
+              </td>
+              <td>3D natural stone textures, brick cladding, and outdoor elevation facades.</td>
+              <td><span class="badge-tag badge-elevation">28 Items</span></td>
+              <td><span class="badge-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">Active</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditCategoryModal('CAT-EL-03', 'Front Elevation Tiles', '3D natural stone textures, brick cladding, and outdoor elevation facades.')" title="Edit Category">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteCategoryDemo('catRow-3', 'Front Elevation Tiles')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Category">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr id="catRow-4">
+              <td><strong style="color:var(--primary);">CAT-KT-04</strong></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+                  <span style="padding:6px; background:rgba(139, 92, 246, 0.15); border-radius:6px; color:var(--accent-purple); font-size:0.9rem;">🍳</span>
+                  Kitchen Splashback Tiles
+                </div>
+              </td>
+              <td>Stain-resistant mosaic subway tiles and digital printed backsplash panels.</td>
+              <td><span class="badge-tag" style="background:rgba(139, 92, 246, 0.15); color:var(--accent-purple);">16 Items</span></td>
+              <td><span class="badge-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">Active</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditCategoryModal('CAT-KT-04', 'Kitchen Splashback Tiles', 'Stain-resistant mosaic subway tiles and digital printed backsplash panels.')" title="Edit Category">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteCategoryDemo('catRow-4', 'Kitchen Splashback Tiles')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Category">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr id="catRow-5">
+              <td><strong style="color:var(--primary);">CAT-OD-05</strong></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+                  <span style="padding:6px; background:rgba(236, 72, 153, 0.15); border-radius:6px; color:#ec4899; font-size:0.9rem;">🌿</span>
+                  Outdoor & Paver Tiles
+                </div>
+              </td>
+              <td>Heavy-duty weather resistant patio pavers and garden pathway tiles.</td>
+              <td><span class="badge-tag" style="background:rgba(236, 72, 153, 0.15); color:#ec4899;">10 Items</span></td>
+              <td><span class="badge-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">Active</span></td>
+              <td>
+                <div class="table-actions">
+                  <button class="btn-tbl" onclick="openEditCategoryModal('CAT-OD-05', 'Outdoor & Paver Tiles', 'Heavy-duty weather resistant patio pavers and garden pathway tiles.')" title="Edit Category">
+                    ✏️ Edit
+                  </button>
+                  <button class="btn-tbl" onclick="deleteCategoryDemo('catRow-5', 'Outdoor & Paver Tiles')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Category">
+                    🗑️ Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Modal 1: Add New Category -->
+  <div id="addCategoryModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">➕ Add New Tile Category</h3>
+        <button class="btn-close-modal" onclick="closeModal('addCategoryModal')">&times;</button>
+      </div>
+
+      <form onsubmit="handleAddCategorySubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="newCatCode">Category Code</label>
+            <input type="text" id="newCatCode" class="form-input" placeholder="e.g. CAT-PR-06" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newCatIcon">Category Icon Emoji</label>
+            <input type="text" id="newCatIcon" class="form-input" placeholder="e.g. 💎 or 🏠" value="✨" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newCatName">Category Name</label>
+          <input type="text" id="newCatName" class="form-input" placeholder="e.g. Premium Marble Tiles" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newCatDesc">Description & Utility</label>
+          <textarea id="newCatDesc" class="form-input" rows="3" placeholder="Specify tile applications, finish types, and usage..." required style="padding:12px 16px;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:28px;">
+          <button type="submit" class="btn-submit" style="flex:1;">Save Category</button>
+          <button type="button" class="btn-admin-secondary" onclick="closeModal('addCategoryModal')" style="padding: 12px 20px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Category -->
+  <div id="editCategoryModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Edit Tile Category</h3>
+        <button class="btn-close-modal" onclick="closeModal('editCategoryModal')">&times;</button>
+      </div>
+
+      <form onsubmit="handleEditCategorySubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="editCatCode">Category Code</label>
+          <input type="text" id="editCatCode" class="form-input" readonly style="opacity:0.7;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="editCatName">Category Name</label>
+          <input type="text" id="editCatName" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="editCatDesc">Description & Utility</label>
+          <textarea id="editCatDesc" class="form-input" rows="3" required style="padding:12px 16px;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:28px;">
+          <button type="submit" class="btn-submit" style="flex:1;">Update Category</button>
+          <button type="button" class="btn-admin-secondary" onclick="closeModal('editCategoryModal')" style="padding: 12px 20px;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-header">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+            </svg>
+          </div>
+          <div class="brand-name">SmartTile <span>Admin</span></div>
+        </div>
+        <p>Centralized Inventory Management Portal for tracking tile stock, categories, transfers, and outlets.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>System Modules</h4>
+        <ul class="footer-links">
+          <li><a href="admin-dashboard.html">Admin Overview</a></li>
+          <li><a href="admin-categories.html">Manage Categories</a></li>
+          <li><a href="admin-dashboard.html#inventoryTable">Inventory Control</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Storefront Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Customer Storefront</a></li>
+          <li><a href="contact.html">Store Outlets</a></li>
+          <li><a href="login.html">Login Screen</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>System Status</h4>
+        <ul class="footer-links">
+          <li>Database Sync: Connected</li>
+          <li>Active Categories: 5</li>
+          <li>Outlets Connected: 2 Outlets</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Smart Tile Store System. Category Management Portal.</span>
+      <span>HTML5 • CSS3 • Vanilla JS</span>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Alert -->
+  <div id="toast" class="toast-msg">
+    <svg id="toastIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <span id="toastText">Category updated successfully!</span>
+  </div>
+
+  <script>
+    let categoryCounter = 5;
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function handleAddCategorySubmit(event) {
+      event.preventDefault();
+      const code = document.getElementById('newCatCode').value;
+      const icon = document.getElementById('newCatIcon').value || '✨';
+      const name = document.getElementById('newCatName').value;
+      const desc = document.getElementById('newCatDesc').value;
+
+      categoryCounter++;
+      const rowId = `catRow-${categoryCounter}`;
+
+      const tbody = document.getElementById('categoryTbody');
+      const tr = document.createElement('tr');
+      tr.id = rowId;
+      tr.innerHTML = `
+        <td><strong style="color:var(--primary);">${code}</strong></td>
+        <td>
+          <div style="display:flex; align-items:center; gap:10px; font-weight:600;">
+            <span style="padding:6px; background:rgba(59, 130, 246, 0.15); border-radius:6px; color:var(--primary); font-size:0.9rem;">${icon}</span>
+            ${name}
+          </div>
+        </td>
+        <td>${desc}</td>
+        <td><span class="badge-tag badge-floor">0 Items</span></td>
+        <td><span class="badge-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981;">Active</span></td>
+        <td>
+          <div class="table-actions">
+            <button class="btn-tbl" onclick="openEditCategoryModal('${code}', '${name}', '${desc}')" title="Edit Category">
+              ✏️ Edit
+            </button>
+            <button class="btn-tbl" onclick="deleteCategoryDemo('${rowId}', '${name}')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);" title="Delete Category">
+              🗑️ Delete
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.prepend(tr);
+
+      document.getElementById('totalCategoryCount').innerText = categoryCounter;
+      closeModal('addCategoryModal');
+      showToast(`Category "${name}" (${code}) added successfully!`, 'success');
+      event.target.reset();
+    }
+
+    function openEditCategoryModal(code, name, desc) {
+      document.getElementById('editCatCode').value = code;
+      document.getElementById('editCatName').value = name;
+      document.getElementById('editCatDesc').value = desc;
+      openModal('editCategoryModal');
+    }
+
+    function handleEditCategorySubmit(event) {
+      event.preventDefault();
+      const code = document.getElementById('editCatCode').value;
+      const name = document.getElementById('editCatName').value;
+      closeModal('editCategoryModal');
+      showToast(`Category "${code}" (${name}) updated successfully!`, 'success');
+    }
+
+    function deleteCategoryDemo(rowId, name) {
+      if (confirm(`Are you sure you want to delete the category "${name}"?`)) {
+        const row = document.getElementById(rowId);
+        if (row) {
+          row.style.opacity = '0';
+          row.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            row.remove();
+            categoryCounter = Math.max(0, categoryCounter - 1);
+            document.getElementById('totalCategoryCount').innerText = categoryCounter;
+            showToast(`Category "${name}" deleted!`, 'error');
+          }, 300);
+        }
+      }
+    }
+
+    function handleLogout() {
+      showToast('Logging out of Admin Panel...', 'success');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      
+      toastText.innerText = message;
+      toast.className = `toast-msg show toast-${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-msg';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
