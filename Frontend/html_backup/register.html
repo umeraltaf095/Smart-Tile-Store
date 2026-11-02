@@ -70,9 +70,7 @@
         </div>
       </div>
 
-      <div class="banner-footer">
-        &copy; 2026 Smart Tile Store System. Virtual University Final Project.
-      </div>
+     
     </div>
 
     <!-- Right Side Registration Form -->
@@ -260,16 +258,7 @@
         Already have an account? <a href="login.html">Log In Here</a>
       </div>
 
-      <!-- Viva Demo Autofill Button -->
-      <div class="viva-demo-box">
-        <div class="viva-demo-title">
-          <span>⚡ Viva Demo Quick Auto-Fill</span>
-          <small>Click to fill form</small>
-        </div>
-        <div class="viva-demo-pills">
-          <button type="button" class="demo-pill" style="width:100%;" onclick="autoFillSampleData()">✨ Auto-Fill Sample Customer Data</button>
-        </div>
-      </div>
+      
 
     </div>
   </div>
@@ -328,18 +317,7 @@
       }
     }
 
-    function autoFillSampleData() {
-      document.getElementById('fullName').value = 'Ahmed Hassan';
-      document.getElementById('phoneInput').value = '+92 300 9876543';
-      document.getElementById('emailInput').value = 'ahmed.hassan@example.com';
-      document.getElementById('customerType').value = 'homeowner';
-      document.getElementById('passwordInput').value = 'TileSmartPass2026!';
-      document.getElementById('confirmPasswordInput').value = 'TileSmartPass2026!';
-      document.getElementById('agreeTerms').checked = true;
-
-      evaluatePasswordStrength();
-      showToast('Sample registration data auto-filled!', 'success');
-    }
+    // Sample autofill removed from registration form.
 
     function handleRegisterSubmit(event) {
       event.preventDefault();

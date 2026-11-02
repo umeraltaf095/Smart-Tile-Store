@@ -69,9 +69,7 @@
         </div>
       </div>
 
-      <div class="banner-footer">
-        &copy; 2026 Smart Tile Store System. Virtual University Final Project.
-      </div>
+      
     </div>
 
     <!-- Right Side Authentication Form -->
@@ -109,14 +107,15 @@
         <div class="form-group">
           <label class="form-label" for="emailInput">Email or Username</label>
           <div class="input-wrapper">
-            <input 
-              type="text" 
-              id="emailInput" 
-              class="form-input" 
-              placeholder="name@example.com" 
-              required
-              autocomplete="email"
-            >
+                <input 
+                  type="text" 
+                  id="emailInput" 
+                  class="form-input" 
+                  placeholder="name@example.com" 
+                  value="demo@email.com"
+                  required
+                  autocomplete="email"
+                >
             <div class="input-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -135,6 +134,7 @@
               id="passwordInput" 
               class="form-input" 
               placeholder="••••••••••••" 
+              value="demo1234"
               required
             >
             <div class="input-icon">
@@ -183,17 +183,11 @@
         Don't have a customer account? <a href="register.html">Register Account</a>
       </div>
 
-      <!-- Viva Demo Credentials Quick Auto-fill Widget -->
-      <div class="viva-demo-box">
-        <div class="viva-demo-title">
-          <span>⚡ Viva Demo Quick Auto-Fill</span>
-          <small>Click to test</small>
-        </div>
-        <div class="viva-demo-pills">
-          <button type="button" class="demo-pill" onclick="autoFillDemo('admin')">🔑 Admin Demo</button>
-          <button type="button" class="demo-pill" onclick="autoFillDemo('customer')">🛒 Customer Demo</button>
-        </div>
+      <div class="visitor-link" style="margin-top:12px;">
+        <a href="index.html">Continue as Visitor</a>
       </div>
+
+      
 
     </div>
   </div>
@@ -252,21 +246,7 @@
       }
     }
 
-    function autoFillDemo(role) {
-      switchRole(role);
-      const emailInput = document.getElementById('emailInput');
-      const passwordInput = document.getElementById('passwordInput');
-
-      if (role === 'admin') {
-        emailInput.value = 'admin@smarttile.com';
-        passwordInput.value = 'admin123';
-        showToast('Admin demo credentials populated!', 'success');
-      } else {
-        emailInput.value = 'customer@smarttile.com';
-        passwordInput.value = 'customer123';
-        showToast('Customer demo credentials populated!', 'success');
-      }
-    }
+    // Demo autofill removed — credentials are prefilled with the demo account.
 
     function handleLoginSubmit(event) {
       event.preventDefault();
