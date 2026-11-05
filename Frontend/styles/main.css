@@ -62,8 +62,13 @@ body {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spin {
@@ -119,7 +124,7 @@ body {
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: black;
   margin-bottom: 8px;
 }
 
@@ -223,5 +228,10 @@ select.form-input option {
   opacity: 1;
 }
 
-.toast-success { border-left-color: #10b981; }
-.toast-error { border-left-color: #ef4444; }
+.toast-success {
+  border-left-color: #10b981;
+}
+
+.toast-error {
+  border-left-color: #ef4444;
+}

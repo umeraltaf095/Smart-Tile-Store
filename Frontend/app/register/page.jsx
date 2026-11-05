@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
   const strength = getPasswordStrength();
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -48,15 +48,44 @@ export default function RegisterPage() {
       return;
     }
 
+    if (password.length < 6) {
+      showToast('Password must be at least 6 characters long', 'error');
+      return;
+    }
+
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: fullName,
+          email,
+          password,
+          phone,
+          address,
+        }),
+      });
+
+      const data = await res.json();
       setLoading(false);
-      showToast('Account created successfully! Redirecting to login...', 'success');
+
+      if (!res.ok || !data.success) {
+        showToast(data.message || 'Registration failed', 'error');
+        return;
+      }
+
+      showToast(data.message || 'Account created successfully! Redirecting...', 'success');
       setTimeout(() => {
         router.push('/login');
       }, 1500);
-    }, 1200);
+    } catch (err) {
+      setLoading(false);
+      showToast('Network error during registration', 'error');
+    }
   };
 
   return (

@@ -39,22 +39,35 @@ export default function LoginPage() {
     }
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          role: activeRole,
+        }),
+      });
+
+      const data = await res.json();
       setLoading(false);
 
-      // Save user session in localStorage for demo
-      const userSession = {
-        email: email,
-        name: activeRole === 'admin' ? 'Store Administrator' : 'Valued Customer',
-        role: activeRole,
-      };
-      localStorage.setItem('smarttile_user', JSON.stringify(userSession));
+      if (!res.ok || !data.success) {
+        showToast(data.message || 'Authentication failed', 'error');
+        return;
+      }
 
-      if (activeRole === 'admin') {
+      // Save user session in localStorage
+      localStorage.setItem('smarttile_user', JSON.stringify(data.user));
+
+      if (data.user.role === 'admin') {
         showToast('Welcome Admin! Redirecting to Admin Dashboard...', 'success');
         setTimeout(() => {
           router.push('/admin/dashboard');
@@ -65,7 +78,10 @@ export default function LoginPage() {
           router.push('/');
         }, 1200);
       }
-    }, 1000);
+    } catch (err) {
+      setLoading(false);
+      showToast('Network error connecting to login backend', 'error');
+    }
   };
 
   const handleForgotPassword = (e) => {
