@@ -26,7 +26,7 @@ export default function Footer() {
             <li><Link href="/">Home Landing</Link></li>
             <li><Link href="/#categories">Tile Categories</Link></li>
             <li><Link href="/#featured">Featured Tiles</Link></li>
-            <li><Link href="/#calculator">Sizing Calculator</Link></li>
+            <li><Link href="/contact">Contact Support</Link></li>
           </ul>
         </div>
 

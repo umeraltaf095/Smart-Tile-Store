@@ -1,18 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Toast from '../components/Toast';
-import { initialProducts, initialCategories } from '../lib/data';
 
 export default function HomePage() {
-  // Calculator State
-  const [calcLength, setCalcLength] = useState(15);
-  const [calcWidth, setCalcWidth] = useState(12);
-  const [wasteMargin, setWasteMargin] = useState(10);
-  const [selectedTileKey, setSelectedTileKey] = useState('60x120');
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dbError, setDbError] = useState('');
 
   // Search & Filter State for Catalog
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,30 +30,76 @@ export default function HomePage() {
     }, 3500);
   };
 
-  // Tile calculator options
-  const tileOptions = {
-    '60x120': { name: 'Carrara White Porcelain', coverage: 15.5, price: 4.50 },
-    '30x60': { name: 'Rustic Slate 3D Stone', coverage: 12.0, price: 5.20 },
-    '30x30': { name: 'Royal Blue Anti-Skid', coverage: 10.0, price: 3.80 },
-    '80x80': { name: 'Travertine Gold Polished', coverage: 14.0, price: 6.10 },
-  };
+  // Fetch live products and categories from database API
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        setLoading(true);
+        setDbError('');
 
-  const currentTileConfig = tileOptions[selectedTileKey] || tileOptions['60x120'];
-  const netArea = (parseFloat(calcLength) || 0) * (parseFloat(calcWidth) || 0);
-  const totalArea = netArea * (1 + (parseFloat(wasteMargin) || 0) / 100);
-  const boxesNeeded = Math.ceil(totalArea / currentTileConfig.coverage) || 0;
-  const estimatedPrice = totalArea * currentTileConfig.price;
+        const [resProd, resCat] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/categories'),
+        ]);
 
-  // Filtered Products
-  const filteredProducts = initialProducts.filter((product) => {
+        const prodData = await resProd.json();
+        const catData = await resCat.json();
+
+        if (prodData.success) {
+          setProducts(prodData.data || []);
+        } else {
+          setProducts([]);
+          if (prodData.message && prodData.message.includes('MongoDB')) {
+            setDbError(prodData.message);
+          }
+        }
+
+        if (catData.success) {
+          setCategories(catData.data || []);
+        } else {
+          setCategories([]);
+          if (catData.message && catData.message.includes('MongoDB')) {
+            setDbError(catData.message);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading storefront data:', err);
+        setProducts([]);
+        setCategories([]);
+        setDbError('Unable to connect to database server. Please verify MongoDB Atlas connection.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+
+  // Filter Active Categories & Products (Case-insensitive)
+  const activeCategories = categories.filter(
+    (c) => !c.status || c.status.toLowerCase() === 'active'
+  );
+  const activeProducts = products.filter(
+    (p) => !p.status || p.status.toLowerCase() === 'active'
+  );
+
+  // Filtered Products for Catalog section
+  const filteredProducts = activeProducts.filter((product) => {
+    const q = searchQuery.toLowerCase();
+    const catName = product.categoryId?.name || product.categoryName || '';
+    const catId = product.categoryId?._id || product.categoryId || '';
+
     const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.size.toLowerCase().includes(searchQuery.toLowerCase());
+      (product.name && product.name.toLowerCase().includes(q)) ||
+      (product.itemId && product.itemId.toLowerCase().includes(q)) ||
+      (product.company && product.company.toLowerCase().includes(q)) ||
+      (product.design && product.design.toLowerCase().includes(q)) ||
+      (product.size && product.size.toLowerCase().includes(q));
 
     const matchesCategory =
-      selectedCategory === 'All' || product.category === selectedCategory;
+      selectedCategory === 'All' ||
+      catId === selectedCategory ||
+      catName.toLowerCase() === selectedCategory.toLowerCase();
 
     return matchesSearch && matchesCategory;
   });
@@ -63,6 +107,13 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
+
+      {/* Atlas Connection Warning if DB is unreachable */}
+      {dbError && (
+        <div style={{ background: 'rgba(239, 68, 68, 0.1)', borderBottom: '1px solid rgba(239, 68, 68, 0.3)', padding: '12px 24px', textAlign: 'center', color: '#f87171', fontSize: '0.9rem' }}>
+          <strong>Database Notice:</strong> {dbError} — Check MongoDB Atlas Network Access (Allow 0.0.0.0/0).
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="hero-wrapper">
@@ -72,176 +123,178 @@ export default function HomePage() {
             Transform Your Space With <span>Architectural Tiles</span>
           </h1>
           <p className="hero-text">
-            Explore premium Floor, Washroom, and Front Elevation tiles with real-time outlet stock availability, custom quotation requests, and automated tile box calculation.
+            Explore premium tiles with live database stock availability, detailed technical specifications, and online quotation requests directly powered by MongoDB Atlas.
           </p>
 
           <div className="hero-actions">
             <a href="#featured" className="btn-submit" style={{ width: 'auto', padding: '14px 28px', textDecoration: 'none' }}>
-              <span>Explore Catalog</span>
+              <span>Explore Catalog ({activeProducts.length} Items)</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
             </a>
 
-            <a href="#calculator" className="btn-secondary" style={{ textDecoration: 'none' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                <line x1="8" y1="6" x2="16" y2="6"></line>
-                <line x1="16" y1="14" x2="16" y2="18"></line>
-                <path d="M16 10h.01"></path>
-                <path d="M12 10h.01"></path>
-                <path d="M8 10h.01"></path>
-                <path d="M12 14h.01"></path>
-                <path d="M8 14h.01"></path>
-                <path d="M12 18h.01"></path>
-                <path d="M8 18h.01"></path>
-              </svg>
-              <span>Tile Box Calculator</span>
+            <a href="#categories" className="btn-secondary" style={{ textDecoration: 'none' }}>
+              <span>Browse Categories</span>
             </a>
           </div>
         </div>
 
-        {/* Hero Visual Card Showcase */}
+        {/* Hero Visual Card Showcase - Dynamic from Database */}
         <div className="hero-visual">
           <div className="tile-showcase-card">
             <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '16px', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>POPULAR FINISHES</span>
-              <span style={{ color: 'var(--accent-cyan)', fontSize: '0.8rem' }}>Live Stock Sync</span>
+              <span style={{ color: 'var(--accent-cyan)', fontSize: '0.8rem' }}>Live Database Sync</span>
             </div>
-            <div className="showcase-grid">
-              <div className="tile-preview-item">
-                <svg width="100%" height="100%" style={{ background: 'linear-gradient(45deg, #1e293b, #334155)' }} viewBox="0 0 100 100">
-                  <rect x="5" y="5" width="42" height="42" fill="#3b82f6" opacity="0.3" rx="4" />
-                  <rect x="53" y="5" width="42" height="42" fill="#06b6d4" opacity="0.3" rx="4" />
-                  <rect x="5" y="53" width="42" height="42" fill="#8b5cf6" opacity="0.3" rx="4" />
-                  <rect x="53" y="53" width="42" height="42" fill="#3b82f6" opacity="0.5" rx="4" />
-                </svg>
-                <div className="tile-tag">Floor Tile (Polished)</div>
-              </div>
 
-              <div className="tile-preview-item">
-                <svg width="100%" height="100%" style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)' }} viewBox="0 0 100 100">
-                  <pattern id="hex" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <polygon points="10,0 20,5 20,15 10,20 0,15 0,5" fill="none" stroke="#64748b" strokeWidth="1" />
-                  </pattern>
-                  <rect width="100%" height="100%" fill="url(#hex)" />
-                </svg>
-                <div className="tile-tag">Washroom Anti-Skid</div>
+            {activeCategories.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                <p>No tile categories registered in database yet.</p>
+                <Link href="/admin/categories" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+                  + Add Categories in Admin Panel
+                </Link>
               </div>
-
-              <div className="tile-preview-item">
-                <svg width="100%" height="100%" style={{ background: 'linear-gradient(180deg, #1e1b4b, #311b92)' }} viewBox="0 0 100 100">
-                  <rect x="0" y="0" width="100" height="20" fill="#4338ca" opacity="0.4" />
-                  <rect x="0" y="25" width="100" height="20" fill="#6366f1" opacity="0.4" />
-                  <rect x="0" y="50" width="100" height="20" fill="#4338ca" opacity="0.4" />
-                  <rect x="0" y="75" width="100" height="20" fill="#6366f1" opacity="0.4" />
-                </svg>
-                <div className="tile-tag">3D Front Elevation</div>
+            ) : (
+              <div className="showcase-grid">
+                {activeCategories.slice(0, 4).map((cat, idx) => {
+                  const gradients = [
+                    'linear-gradient(45deg, #1e293b, #334155)',
+                    'linear-gradient(135deg, #0f172a, #1e293b)',
+                    'linear-gradient(180deg, #1e1b4b, #311b92)',
+                    'linear-gradient(135deg, #111827, #1f2937)',
+                  ];
+                  return (
+                    <div
+                      key={cat._id}
+                      className="tile-preview-item"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setSelectedCategory(cat._id);
+                        const featuredSection = document.getElementById('featured');
+                        if (featuredSection) featuredSection.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      <svg width="100%" height="100%" style={{ background: gradients[idx % gradients.length] }} viewBox="0 0 100 100">
+                        <rect x="5" y="5" width="42" height="42" fill="#3b82f6" opacity="0.3" rx="4" />
+                        <rect x="53" y="5" width="42" height="42" fill="#06b6d4" opacity="0.3" rx="4" />
+                        <rect x="5" y="53" width="42" height="42" fill="#8b5cf6" opacity="0.3" rx="4" />
+                        <rect x="53" y="53" width="42" height="42" fill="#3b82f6" opacity="0.5" rx="4" />
+                      </svg>
+                      <div className="tile-tag">{cat.name}</div>
+                    </div>
+                  );
+                })}
               </div>
-
-              <div className="tile-preview-item">
-                <svg width="100%" height="100%" style={{ background: 'linear-gradient(135deg, #111827, #1f2937)' }} viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="35" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.5" />
-                  <circle cx="50" cy="50" r="20" fill="none" stroke="#06b6d4" strokeWidth="2" opacity="0.5" />
-                </svg>
-                <div className="tile-tag">Royal Marble Pattern</div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Tile Categories Section */}
+      {/* Dynamic Tile Categories Section */}
       <section className="section-container" id="categories">
         <div className="section-header">
           <span className="section-tag">Tile Categories</span>
           <h2 className="section-title">Designed For Every Surface</h2>
           <p className="section-desc">
-            Browse our curated selection of high-grade porcelain, ceramic, and natural stone tiles categorized for optimal utility.
+            Browse our live product classifications from MongoDB Atlas.
           </p>
         </div>
 
-        <div className="category-grid">
-          {/* Category 1: Floor Tiles */}
-          <div className="category-card" onClick={() => setSelectedCategory('Floor Tiles')} style={{ cursor: 'pointer' }}>
-            <div>
-              <div className="category-icon-box">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="12" y1="3" x2="12" y2="21"></line>
-                </svg>
-              </div>
-              <h3 className="category-title">Floor Tiles</h3>
-              <p className="category-desc">
-                Heavy-duty porcelain and marble finish tiles crafted for living rooms, hallways, and high-traffic commercial spaces.
-              </p>
-            </div>
-            <a href="#featured" className="category-link">
-              <span>Explore Floor Collection</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+            Loading categories from database...
           </div>
+        ) : activeCategories.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '50px 20px', background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
+            <div style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '8px' }}>
+              No Categories Available
+            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
+              There are currently no tile categories in the database.
+            </p>
+            <Link href="/admin/categories" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-flex' }}>
+              + Add Category in Admin Panel
+            </Link>
+          </div>
+        ) : (
+          <div className="category-grid">
+            {activeCategories.map((cat, idx) => {
+              const catProdCount = activeProducts.filter(
+                (p) => (p.categoryId?._id || p.categoryId) === cat._id
+              ).length;
 
-          {/* Category 2: Washroom Tiles */}
-          <div className="category-card" onClick={() => setSelectedCategory('Washroom Tiles')} style={{ cursor: 'pointer' }}>
-            <div>
-              <div className="category-icon-box" style={{ background: 'rgba(6, 182, 212, 0.12)', borderColor: 'rgba(6, 182, 212, 0.3)', color: 'var(--accent-cyan)' }}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                </svg>
-              </div>
-              <h3 className="category-title">Washroom Tiles</h3>
-              <p className="category-desc">
-                Waterproof, anti-skid floor tiles and glossy moisture-resistant wall tiles designed for modern bathrooms.
-              </p>
-            </div>
-            <a href="#featured" className="category-link" style={{ color: 'var(--accent-cyan)' }}>
-              <span>Explore Washroom Collection</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
-          </div>
+              const colors = [
+                { bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)', color: 'var(--primary)' },
+                { bg: 'rgba(6, 182, 212, 0.12)', border: 'rgba(6, 182, 212, 0.3)', color: 'var(--accent-cyan)' },
+                { bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)', color: 'var(--accent-gold)' },
+                { bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)', color: 'var(--accent-purple)' },
+              ];
+              const theme = colors[idx % colors.length];
 
-          {/* Category 3: Front Elevation Tiles */}
-          <div className="category-card" onClick={() => setSelectedCategory('Front Elevation Tiles')} style={{ cursor: 'pointer' }}>
-            <div>
-              <div className="category-icon-box" style={{ background: 'rgba(245, 158, 11, 0.12)', borderColor: 'rgba(245, 158, 11, 0.3)', color: 'var(--accent-gold)' }}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                  <polyline points="2 17 12 22 22 17"></polyline>
-                  <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
-              </div>
-              <h3 className="category-title">Front Elevation Tiles</h3>
-              <p className="category-desc">
-                Weather-proof textured 3D stone tiles and brick designs engineered for outdoor exterior walls and building fronts.
-              </p>
-            </div>
-            <a href="#featured" className="category-link" style={{ color: 'var(--accent-gold)' }}>
-              <span>Explore Elevation Collection</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
+              return (
+                <div
+                  key={cat._id}
+                  className="category-card"
+                  onClick={() => {
+                    setSelectedCategory(cat._id);
+                    const featuredSection = document.getElementById('featured');
+                    if (featuredSection) featuredSection.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div>
+                    <div
+                      className="category-icon-box"
+                      style={{ background: theme.bg, borderColor: theme.border, color: theme.color }}
+                    >
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                      </svg>
+                    </div>
+                    <div className="category-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className="category-name">{cat.name}</span>
+                      <span style={{ fontSize: '0.75rem', color: theme.color, fontWeight: 700, background: theme.bg, padding: '3px 8px', borderRadius: '12px' }}>
+                        {catProdCount} {catProdCount === 1 ? 'Tile' : 'Tiles'}
+                      </span>
+                    </div>
+                    <p className="category-desc">
+                      {cat.description || 'Explore our dynamic collection of tiles under this category.'}
+                    </p>
+                  </div>
+                  <span className="category-link">
+                    <span>Explore Collection</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        )}
       </section>
 
-      {/* Featured Products Section with Live Search & Filter */}
+      {/* Featured Products Section with Live Dynamic Search & Filter */}
       <section className="section-container" id="featured">
         <div className="section-header">
           <span className="section-tag">Featured Products</span>
           <h2 className="section-title">Popular Tile Selection</h2>
           <p className="section-desc">
-            Inspect exact specifications, prices per sq.ft, and live stock location availability across outlets.
+            Inspect live specifications, prices, manufacturer details, and box coverage dynamically from MongoDB Atlas.
           </p>
         </div>
 
-        {/* Search & Filter Bar */}
+        {/* Dynamic Search & Filter Bar */}
         <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
           <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
             <input
               type="text"
-              placeholder="Search tiles by name, size, company or code..."
+              placeholder="Search tiles by name, item ID, company, design or size..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="form-input"
@@ -261,176 +314,129 @@ export default function HomePage() {
               className="form-input"
               style={{ width: 'auto', padding: '8px 12px' }}
             >
-              <option value="All">All Categories</option>
-              <option value="Floor Tiles">Floor Tiles</option>
-              <option value="Washroom Tiles">Washroom Tiles</option>
-              <option value="Front Elevation Tiles">Front Elevation Tiles</option>
+              <option value="All">All Categories ({activeProducts.length})</option>
+              {activeCategories.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
 
+        {/* Dynamic Product Grid */}
         <div className="product-grid">
-          {filteredProducts.length === 0 ? (
+          {loading ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-              No tile models found matching your search criteria.
+              Loading products from database...
+            </div>
+          ) : activeProducts.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px' }}>
+                No Data Available
+              </div>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', marginBottom: '20px' }}>
+                There are currently no tile products available in the database.
+              </p>
+              <Link href="/admin/products" className="btn-submit" style={{ textDecoration: 'none', display: 'inline-flex', width: 'auto', fontSize: '0.88rem' }}>
+                + Add Product in Admin Panel
+              </Link>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
+              No tile models found matching your search.
             </div>
           ) : (
-            filteredProducts.map((tile) => (
-              <div key={tile.id} className="product-card">
-                <div className="product-thumb">
-                  <span
-                    className="product-badge"
-                    style={{
-                      background:
-                        tile.category === 'Washroom Tiles'
+            filteredProducts.map((tile, idx) => {
+              const catName = tile.categoryId?.name || tile.categoryName || 'General';
+              const isWashroom = catName.toLowerCase().includes('washroom') || catName.toLowerCase().includes('bath');
+              const isElevation = catName.toLowerCase().includes('elevation');
+
+              return (
+                <div key={tile._id || idx} className="product-card">
+                  <Link
+                    href={`/products/${tile._id}`}
+                    className="product-thumb"
+                    style={{ textDecoration: 'none', display: 'block', cursor: 'pointer' }}
+                    title={`View full details of ${tile.name}`}
+                  >
+                    <span
+                      className="product-badge"
+                      style={{
+                        background: isWashroom
                           ? 'var(--accent-cyan)'
-                          : tile.category === 'Front Elevation Tiles'
+                          : isElevation
                           ? 'var(--accent-gold)'
                           : 'var(--primary)',
-                    }}
-                  >
-                    {tile.category}
-                  </span>
-                  <span className="stock-badge">{tile.stockWarehouseA} Boxes (Main Wh)</span>
-                  <svg width="100%" height="100%" viewBox="0 0 200 200" style={{ background: '#1e293b' }}>
-                    <rect width="100%" height="100%" fill="#0f172a" />
-                    <path d="M0,0 L200,200 M200,0 L0,200" stroke="#334155" strokeWidth="2" />
-                    <rect x="40" y="40" width="120" height="120" fill="#3b82f6" opacity="0.2" rx="8" />
-                  </svg>
-                </div>
-                <div className="product-body">
-                  <div>
-                    <h3 className="product-title">{tile.name}</h3>
-                    <div className="product-meta">
-                      <span>Size: {tile.size}</span>
-                      <span>Code: {tile.code}</span>
-                    </div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--accent-cyan)', marginTop: '4px' }}>
-                      Brand: {tile.company}
-                    </div>
-                  </div>
-                  <div className="product-price-row">
-                    <div className="product-price">
-                      ${tile.price.toFixed(2)} <span>/ {tile.unit}</span>
-                    </div>
-                    <button
-                      className="btn-icon"
-                      onClick={() => showToast(`Quotation requested for ${tile.name}`, 'success')}
+                      }}
                     >
-                      <span>Order / Quote</span>
-                    </button>
+                      {catName}
+                    </span>
+                    <span className="stock-badge">
+                      {tile.boxCoverage ? `${tile.boxCoverage} Sq.Ft / Box` : '15 Sq.Ft / Box'}
+                    </span>
+                    <svg width="100%" height="100%" viewBox="0 0 200 200" style={{ background: '#1e293b' }}>
+                      <rect width="100%" height="100%" fill="#0f172a" />
+                      <path d="M0,0 L200,200 M200,0 L0,200" stroke="#334155" strokeWidth="2" />
+                      <rect x="40" y="40" width="120" height="120" fill="#3b82f6" opacity="0.2" rx="8" />
+                    </svg>
+                  </Link>
+                  <div className="product-body">
+                    <div>
+                      <h3 className="product-title" style={{ margin: 0 }}>
+                        <Link
+                          href={`/products/${tile._id}`}
+                          style={{ textDecoration: 'none', color: 'inherit', transition: 'color 0.2s' }}
+                          title={`View details for ${tile.name}`}
+                        >
+                          {tile.name}
+                        </Link>
+                      </h3>
+                      <div className="product-meta">
+                        <span>Size: {tile.size || 'Standard'}</span>
+                        <span style={{ fontWeight: 600, color: 'var(--primary)' }}>ID: {tile.itemId}</span>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--accent-cyan)', marginTop: '4px', fontWeight: 600 }}>
+                        Brand: {tile.company}
+                      </div>
+                      {tile.design && (
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '2px' }}>
+                          Design: {tile.design}
+                        </div>
+                      )}
+                    </div>
+                    <div className="product-price-row" style={{ marginTop: '12px' }}>
+                      <div className="product-price">
+                        ${Number(tile.price).toFixed(2)} <span>/ {tile.unitType || 'Sq.Ft'}</span>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '14px' }}>
+                      <Link
+                        href={`/products/${tile._id}`}
+                        className="btn-submit"
+                        style={{
+                          textDecoration: 'none',
+                          fontSize: '0.85rem',
+                          padding: '10px 14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          width: '100%',
+                        }}
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <span>View Specifications & Availability</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
-        </div>
-      </section>
-
-      {/* Interactive Tile Box Calculator Section */}
-      <section className="section-container" id="calculator">
-        <div className="calculator-box">
-          <div className="section-header" style={{ marginBottom: '32px' }}>
-            <span className="section-tag">Interactive Sizing Tool</span>
-            <h2 className="section-title">Automated Tile Box Calculator</h2>
-            <p className="section-desc">
-              Calculate exact square footage, recommended waste buffer, and number of boxes required for your room project.
-            </p>
-          </div>
-
-          <div className="calc-grid">
-            {/* Input Form */}
-            <div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label" htmlFor="roomLength">Room Length (Feet)</label>
-                  <input
-                    type="number"
-                    id="roomLength"
-                    className="form-input"
-                    value={calcLength}
-                    min="1"
-                    onChange={(e) => setCalcLength(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="roomWidth">Room Width (Feet)</label>
-                  <input
-                    type="number"
-                    id="roomWidth"
-                    className="form-input"
-                    value={calcWidth}
-                    min="1"
-                    onChange={(e) => setCalcWidth(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="tileSelect">Selected Tile Size</label>
-                <select
-                  id="tileSelect"
-                  className="form-input"
-                  value={selectedTileKey}
-                  onChange={(e) => setSelectedTileKey(e.target.value)}
-                >
-                  <option value="60x120">Carrara White (60x120 cm - 15.5 sq.ft/box)</option>
-                  <option value="30x60">Rustic Slate (30x60 cm - 12.0 sq.ft/box)</option>
-                  <option value="30x30">Royal Blue (30x30 cm - 10.0 sq.ft/box)</option>
-                  <option value="80x80">Travertine Gold (80x80 cm - 14.0 sq.ft/box)</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="wasteBuffer">Waste Buffer Margin (%)</label>
-                <select
-                  id="wasteBuffer"
-                  className="form-input"
-                  value={wasteMargin}
-                  onChange={(e) => setWasteMargin(e.target.value)}
-                >
-                  <option value="5">5% Standard Cutting Margin</option>
-                  <option value="10">10% Recommended (Diagonal/Pattern)</option>
-                  <option value="15">15% High Waste Allowance</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Calculated Output Results */}
-            <div className="calc-output-box">
-              <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '16px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span>Estimation Result</span>
-              </div>
-
-              <div className="calc-stat-group">
-                <span className="calc-stat-label">Net Surface Area:</span>
-                <span className="calc-stat-value">{netArea.toFixed(1)} Sq.Ft</span>
-              </div>
-
-              <div className="calc-stat-group">
-                <span className="calc-stat-label">Area + Waste Buffer:</span>
-                <span className="calc-stat-value">{totalArea.toFixed(1)} Sq.Ft</span>
-              </div>
-
-              <div className="calc-stat-group">
-                <span className="calc-stat-label">Tile Boxes Required:</span>
-                <span className="calc-stat-value" style={{ color: 'var(--primary)' }}>
-                  {boxesNeeded} Boxes
-                </span>
-              </div>
-
-              <div className="calc-stat-group">
-                <span className="calc-stat-label">Estimated Total Price:</span>
-                <span className="calc-stat-value" style={{ color: 'var(--accent-gold)' }}>
-                  ${estimatedPrice.toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 

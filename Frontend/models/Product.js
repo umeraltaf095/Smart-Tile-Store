@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Category from './Category'; // Ensure Category model is registered for populate
+import './Category.js';
 
 const ProductSchema = new mongoose.Schema(
   {

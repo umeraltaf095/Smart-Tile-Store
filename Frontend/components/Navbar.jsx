@@ -61,11 +61,6 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/#calculator" className="nav-link">
-                Tile Calculator
-              </Link>
-            </li>
-            <li>
               <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
                 Contact Us
               </Link>

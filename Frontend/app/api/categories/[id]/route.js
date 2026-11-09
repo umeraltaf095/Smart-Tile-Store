@@ -16,7 +16,8 @@ export async function PUT(request, { params }) {
       );
     }
 
-    if (status && !['active', 'inactive'].includes(status)) {
+    const normalizedStatus = status ? status.toLowerCase() : 'active';
+    if (!['active', 'inactive'].includes(normalizedStatus)) {
       return NextResponse.json(
         { success: false, message: 'Status must be either "active" or "inactive"' },
         { status: 400 }
@@ -25,61 +26,35 @@ export async function PUT(request, { params }) {
 
     const conn = await connectDB();
 
-    if (conn) {
-      const updated = await Category.findByIdAndUpdate(
-        id,
-        {
-          name: name.trim(),
-          description: (description || '').trim(),
-          status: status || 'active',
-        },
-        { new: true, runValidators: true }
+    if (!conn) {
+      return NextResponse.json(
+        { success: false, message: 'Database connection unavailable' },
+        { status: 503 }
       );
-
-      if (!updated) {
-        return NextResponse.json(
-          { success: false, message: 'Category not found' },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Category updated successfully',
-        data: updated,
-        source: 'mongodb',
-      });
     }
 
-    // In-memory fallback
-    if (!global.__mockCategories) {
+    const updated = await Category.findByIdAndUpdate(
+      id,
+      {
+        name: name.trim(),
+        description: (description || '').trim(),
+        status: normalizedStatus,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
       return NextResponse.json(
         { success: false, message: 'Category not found' },
         { status: 404 }
       );
     }
-
-    const index = global.__mockCategories.findIndex((c) => c._id === id);
-    if (index === -1) {
-      return NextResponse.json(
-        { success: false, message: 'Category not found' },
-        { status: 404 }
-      );
-    }
-
-    global.__mockCategories[index] = {
-      ...global.__mockCategories[index],
-      name: name.trim(),
-      description: (description || '').trim(),
-      status: status || 'active',
-      updatedAt: new Date().toISOString(),
-    };
 
     return NextResponse.json({
       success: true,
       message: 'Category updated successfully',
-      data: global.__mockCategories[index],
-      source: 'demo_fallback',
+      data: updated,
+      source: 'mongodb',
     });
   } catch (error) {
     console.error('Error updating category:', error);
@@ -96,47 +71,26 @@ export async function DELETE(request, { params }) {
     const { id } = params;
     const conn = await connectDB();
 
-    if (conn) {
-      const deleted = await Category.findByIdAndDelete(id);
-
-      if (!deleted) {
-        return NextResponse.json(
-          { success: false, message: 'Category not found' },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Category deleted successfully',
-        data: deleted,
-        source: 'mongodb',
-      });
+    if (!conn) {
+      return NextResponse.json(
+        { success: false, message: 'Database connection unavailable' },
+        { status: 503 }
+      );
     }
 
-    // In-memory fallback
-    if (!global.__mockCategories) {
+    const deleted = await Category.findByIdAndDelete(id);
+
+    if (!deleted) {
       return NextResponse.json(
         { success: false, message: 'Category not found' },
         { status: 404 }
       );
     }
-
-    const index = global.__mockCategories.findIndex((c) => c._id === id);
-    if (index === -1) {
-      return NextResponse.json(
-        { success: false, message: 'Category not found' },
-        { status: 404 }
-      );
-    }
-
-    const deletedItem = global.__mockCategories.splice(index, 1)[0];
 
     return NextResponse.json({
       success: true,
-      message: 'Category deleted successfully',
-      data: deletedItem,
-      source: 'demo_fallback',
+      message: 'Category deleted successfully from database',
+      source: 'mongodb',
     });
   } catch (error) {
     console.error('Error deleting category:', error);
@@ -146,4 +100,3 @@ export async function DELETE(request, { params }) {
     );
   }
 }
-

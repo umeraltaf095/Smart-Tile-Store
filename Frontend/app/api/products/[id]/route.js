@@ -3,6 +3,48 @@ import { connectDB } from '../../../../lib/mongodb';
 import Product from '../../../../models/Product';
 import Category from '../../../../models/Category';
 
+// GET: Fetch a single product by ID or Item ID
+export async function GET(request, { params }) {
+  try {
+    const { id } = params;
+    const conn = await connectDB();
+
+    if (!conn) {
+      return NextResponse.json(
+        { success: false, message: 'Database connection unavailable' },
+        { status: 503 }
+      );
+    }
+
+    let product = null;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(id).populate('categoryId', 'name status description');
+    }
+    if (!product) {
+      product = await Product.findOne({ itemId: id.toUpperCase() }).populate('categoryId', 'name status description');
+    }
+
+    if (!product) {
+      return NextResponse.json(
+        { success: false, message: 'Tile product not found in database' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: product,
+      source: 'mongodb',
+    });
+  } catch (error) {
+    console.error('Error fetching product by ID:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to fetch product: ' + error.message },
+      { status: 500 }
+    );
+  }
+}
+
 // PUT: Update an existing product by ID
 export async function PUT(request, { params }) {
   try {
@@ -37,110 +79,61 @@ export async function PUT(request, { params }) {
       );
     }
 
-    if (status && !['active', 'inactive'].includes(status)) {
-      return NextResponse.json(
-        { success: false, message: 'Status must be "active" or "inactive"' },
-        { status: 400 }
-      );
-    }
-
     const conn = await connectDB();
 
-    if (conn) {
-      // Check if itemId conflicts with another product
-      if (itemId) {
-        const conflict = await Product.findOne({
-          itemId: itemId.trim().toUpperCase(),
-          _id: { $ne: id },
-        });
-        if (conflict) {
-          return NextResponse.json(
-            { success: false, message: `Another product already has Item ID "${itemId.trim().toUpperCase()}"` },
-            { status: 400 }
-          );
-        }
-      }
+    if (!conn) {
+      return NextResponse.json(
+        { success: false, message: 'Database connection unavailable' },
+        { status: 503 }
+      );
+    }
 
-      const updateData = {
-        name: name.trim(),
-        company: company?.trim(),
-        size: size.trim(),
-        design: design.trim(),
-        price: Number(price),
-        unitType: unitType.trim() || 'Sq.Ft',
-        boxCoverage: Number(boxCoverage) || 15.0,
-        description: description.trim(),
-        status: status || 'active',
-      };
-
-      if (itemId) updateData.itemId = itemId.trim().toUpperCase();
-      if (categoryId) updateData.categoryId = categoryId;
-
-      const updated = await Product.findByIdAndUpdate(id, updateData, {
-        new: true,
-        runValidators: true,
-      }).populate('categoryId', 'name status');
-
-      if (!updated) {
+    // Check duplicate itemId if changed
+    if (itemId) {
+      const duplicate = await Product.findOne({
+        _id: { $ne: id },
+        itemId: itemId.trim().toUpperCase(),
+      });
+      if (duplicate) {
         return NextResponse.json(
-          { success: false, message: 'Product not found' },
-          { status: 404 }
+          { success: false, message: `Item ID "${itemId}" is already used by another tile` },
+          { status: 400 }
         );
       }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Product updated successfully',
-        data: updated,
-        source: 'mongodb',
-      });
     }
 
-    // In-memory fallback
-    if (!global.__mockProducts) {
-      return NextResponse.json(
-        { success: false, message: 'Product not found' },
-        { status: 404 }
-      );
-    }
-
-    const index = global.__mockProducts.findIndex((p) => p._id === id);
-    if (index === -1) {
-      return NextResponse.json(
-        { success: false, message: 'Product not found' },
-        { status: 404 }
-      );
-    }
-
-    let catDetails = global.__mockProducts[index].categoryId;
-    if (categoryId && global.__mockCategories) {
-      const matchCat = global.__mockCategories.find((c) => c._id === categoryId);
-      if (matchCat) {
-        catDetails = { _id: matchCat._id, name: matchCat.name };
-      }
-    }
-
-    global.__mockProducts[index] = {
-      ...global.__mockProducts[index],
-      itemId: itemId ? itemId.trim().toUpperCase() : global.__mockProducts[index].itemId,
+    const updateFields = {
       name: name.trim(),
-      categoryId: catDetails,
-      company: company ? company.trim() : global.__mockProducts[index].company,
-      size: size.trim(),
-      design: design.trim(),
+      company: (company || '').trim(),
+      size: (size || '').trim(),
+      design: (design || '').trim(),
       price: Number(price),
-      unitType: unitType.trim() || 'Sq.Ft',
+      unitType: unitType || 'Sq.Ft',
       boxCoverage: Number(boxCoverage) || 15.0,
-      description: description.trim(),
-      status: status || 'active',
-      updatedAt: new Date().toISOString(),
+      description: (description || '').trim(),
+      status: status ? status.toLowerCase() : 'active',
     };
+
+    if (itemId) updateFields.itemId = itemId.trim().toUpperCase();
+    if (categoryId) updateFields.categoryId = categoryId;
+
+    const updated = await Product.findByIdAndUpdate(id, updateFields, {
+      new: true,
+      runValidators: true,
+    }).populate('categoryId', 'name status');
+
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, message: 'Tile product not found' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Product updated successfully',
-      data: global.__mockProducts[index],
-      source: 'demo_fallback',
+      message: 'Tile product updated successfully',
+      data: updated,
+      source: 'mongodb',
     });
   } catch (error) {
     console.error('Error updating product:', error);
@@ -151,52 +144,32 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE: Delete product by ID
+// DELETE: Delete a product by ID
 export async function DELETE(request, { params }) {
   try {
     const { id } = params;
     const conn = await connectDB();
 
-    if (conn) {
-      const deleted = await Product.findByIdAndDelete(id);
-      if (!deleted) {
-        return NextResponse.json(
-          { success: false, message: 'Product not found' },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Product deleted successfully',
-        data: deleted,
-        source: 'mongodb',
-      });
-    }
-
-    // In-memory fallback
-    if (!global.__mockProducts) {
+    if (!conn) {
       return NextResponse.json(
-        { success: false, message: 'Product not found' },
-        { status: 404 }
+        { success: false, message: 'Database connection unavailable' },
+        { status: 503 }
       );
     }
 
-    const index = global.__mockProducts.findIndex((p) => p._id === id);
-    if (index === -1) {
+    const deleted = await Product.findByIdAndDelete(id);
+
+    if (!deleted) {
       return NextResponse.json(
-        { success: false, message: 'Product not found' },
+        { success: false, message: 'Tile product not found' },
         { status: 404 }
       );
     }
-
-    const deletedItem = global.__mockProducts.splice(index, 1)[0];
 
     return NextResponse.json({
       success: true,
-      message: 'Product deleted successfully',
-      data: deletedItem,
-      source: 'demo_fallback',
+      message: 'Tile product deleted successfully from database',
+      source: 'mongodb',
     });
   } catch (error) {
     console.error('Error deleting product:', error);
@@ -206,4 +179,3 @@ export async function DELETE(request, { params }) {
     );
   }
 }
-

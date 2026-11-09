@@ -49,6 +49,35 @@ export default function AdminDashboard() {
     }, 3500);
   };
 
+  const generateNextProdCode = (cat = newProdCat) => {
+    let prefix = 'T-FL';
+    const lower = (cat || '').toLowerCase();
+    if (lower.includes('floor')) prefix = 'T-FL';
+    else if (lower.includes('washroom') || lower.includes('bath')) prefix = 'T-WS';
+    else if (lower.includes('elevation')) prefix = 'T-EL';
+    else prefix = 'T-KT';
+
+    let maxNum = 100;
+    products.forEach((p) => {
+      const code = p.code || p.itemId;
+      if (code) {
+        const matches = String(code).match(/\d+/g);
+        if (matches && matches.length > 0) {
+          const num = parseInt(matches[matches.length - 1], 10);
+          if (num > maxNum) maxNum = num;
+        }
+      }
+    });
+
+    return `${prefix}-${maxNum + 1}`;
+  };
+
+  const openAddProductModal = () => {
+    setNewProdCode(generateNextProdCode());
+    setNewProdName('');
+    setShowAddProductModal(true);
+  };
+
   const handleAddProduct = (e) => {
     e.preventDefault();
     const newProduct = {
@@ -157,7 +186,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button className="btn-admin-action" onClick={() => setShowAddProductModal(true)}>
+            <button className="btn-admin-action" onClick={openAddProductModal}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -324,13 +353,18 @@ export default function AdminDashboard() {
               <div className="modal-body">
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">Item Code</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="form-label" style={{ marginBottom: 0 }}>Item Code</label>
+                      <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>
+                        ● Auto-Assigned
+                      </span>
+                    </div>
                     <input
                       type="text"
                       className="form-input"
-                      placeholder="e.g. T-FL-205"
+                      style={{ background: 'var(--bg-dark)', cursor: 'not-allowed', fontWeight: 600, color: 'var(--primary)' }}
                       value={newProdCode}
-                      onChange={(e) => setNewProdCode(e.target.value)}
+                      readOnly
                       required
                     />
                   </div>
@@ -339,7 +373,11 @@ export default function AdminDashboard() {
                     <select
                       className="form-input"
                       value={newProdCat}
-                      onChange={(e) => setNewProdCat(e.target.value)}
+                      onChange={(e) => {
+                        const cat = e.target.value;
+                        setNewProdCat(cat);
+                        setNewProdCode(generateNextProdCode(cat));
+                      }}
                     >
                       <option value="Floor Tiles">Floor Tiles</option>
                       <option value="Washroom Tiles">Washroom Tiles</option>

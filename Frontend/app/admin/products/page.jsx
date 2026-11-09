@@ -18,6 +18,9 @@ export default function AdminProducts() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentEditProduct, setCurrentEditProduct] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // New Product Form State (Strictly matching updated MongoDB Schema)
   const [newItemId, setNewItemId] = useState('');
@@ -44,6 +47,53 @@ export default function AdminProducts() {
     setTimeout(() => {
       setToastVisible(false);
     }, 3500);
+  };
+
+  // Helper: Auto-generate unique Item ID based on category and existing sequence
+  const generateNextItemId = (catId = newCategoryId) => {
+    let prefix = 'T-FL';
+    const selectedCat = categories.find((c) => c._id === catId);
+    if (selectedCat) {
+      const name = selectedCat.name.toLowerCase();
+      if (name.includes('floor')) prefix = 'T-FL';
+      else if (name.includes('washroom') || name.includes('bath')) prefix = 'T-WS';
+      else if (name.includes('elevation')) prefix = 'T-EL';
+      else if (name.includes('kitchen')) prefix = 'T-KT';
+      else if (name.includes('outdoor')) prefix = 'T-OD';
+      else {
+        const letters = selectedCat.name.replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase();
+        prefix = 'T-' + (letters || 'GN');
+      }
+    }
+
+    // Find highest existing numeric suffix
+    let maxNum = 100;
+    products.forEach((p) => {
+      if (p.itemId) {
+        const matches = p.itemId.match(/\d+/g);
+        if (matches && matches.length > 0) {
+          const lastNum = parseInt(matches[matches.length - 1], 10);
+          if (lastNum > maxNum) maxNum = lastNum;
+        }
+      }
+    });
+
+    return `${prefix}-${maxNum + 1}`;
+  };
+
+  // Open Add Modal with automatically assigned Item ID
+  const openAddModal = () => {
+    const initialCat = categories.length > 0 ? categories[0]._id : '';
+    setNewCategoryId(initialCat);
+    setNewItemId(generateNextItemId(initialCat));
+    setNewName('');
+    setNewCompany('');
+    setNewDesign('');
+    setNewDescription('');
+    setNewPrice('4.50');
+    setNewBoxCoverage('15.5');
+    setNewStatus('active');
+    setShowAddModal(true);
   };
 
   // 1. Fetch products & categories from API
@@ -197,26 +247,36 @@ export default function AdminProducts() {
     }
   };
 
-  // 5. Delete Product (DELETE API)
-  const handleDeleteProduct = async (product) => {
-    if (!confirm(`Are you sure you want to delete tile product "${product.name}" (${product.itemId})?`)) {
-      return;
-    }
+  // 5. Delete Product - Open Custom Confirmation Modal
+  const confirmDeleteProduct = (product) => {
+    setProductToDelete(product);
+    setShowDeleteModal(true);
+  };
 
+  // Execute Delete via API
+  const executeDeleteProduct = async () => {
+    if (!productToDelete) return;
+
+    setDeleteLoading(true);
     try {
-      const res = await fetch(`/api/products/${product._id}`, {
+      const res = await fetch(`/api/products/${productToDelete._id}`, {
         method: 'DELETE',
       });
 
       const data = await res.json();
+      setDeleteLoading(false);
+
       if (!res.ok || !data.success) {
         showToast(data.message || 'Failed to delete product', 'error');
         return;
       }
 
-      showToast(`Product "${product.name}" deleted successfully!`, 'success');
+      showToast(`Product "${productToDelete.name}" deleted successfully!`, 'success');
+      setShowDeleteModal(false);
+      setProductToDelete(null);
       fetchData();
     } catch (err) {
+      setDeleteLoading(false);
       showToast('Network error deleting product', 'error');
     }
   };
@@ -257,7 +317,7 @@ export default function AdminProducts() {
               Maintain tile product details including item ID, size, design, price, manufacturing company, and unit types.
             </p>
           </div>
-          <button className="btn-admin-action" onClick={() => setShowAddModal(true)}>
+          <button className="btn-admin-action" onClick={openAddModal}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -413,7 +473,7 @@ export default function AdminProducts() {
                           </button>
                           <button
                             className="btn-tbl"
-                            onClick={() => handleDeleteProduct(tile)}
+                            onClick={() => confirmDeleteProduct(tile)}
                             style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' }}
                             title="Delete Tile"
                           >
@@ -443,13 +503,18 @@ export default function AdminProducts() {
                 {/* Row 1: Item ID & Product Name */}
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">Item ID <span style={{ color: '#ef4444' }}>*</span></label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="form-label" style={{ marginBottom: 0 }}>Item ID</label>
+                      <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>
+                        ● Auto-Assigned
+                      </span>
+                    </div>
                     <input
                       type="text"
                       className="form-input"
-                      placeholder="e.g. T-FL-101"
+                      style={{ background: 'var(--bg-dark)', cursor: 'not-allowed', fontWeight: 600, color: 'var(--primary)' }}
                       value={newItemId}
-                      onChange={(e) => setNewItemId(e.target.value)}
+                      readOnly
                       required
                     />
                   </div>
@@ -473,7 +538,11 @@ export default function AdminProducts() {
                     <select
                       className="form-input"
                       value={newCategoryId}
-                      onChange={(e) => setNewCategoryId(e.target.value)}
+                      onChange={(e) => {
+                        const catId = e.target.value;
+                        setNewCategoryId(catId);
+                        setNewItemId(generateNextItemId(catId));
+                      }}
                       required
                     >
                       <option value="">Select a Category</option>
@@ -757,6 +826,54 @@ export default function AdminProducts() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {showDeleteModal && productToDelete && (
+        <div className="modal-overlay active">
+          <div className="modal-box" style={{ maxWidth: '460px', textAlign: 'center', padding: '28px 24px' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.12)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-main)' }}>
+              Delete Tile Product?
+            </h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', marginBottom: '24px', lineHeight: 1.5 }}>
+              Are you sure you want to delete <strong style={{ color: 'var(--text-main)' }}>"{productToDelete.name}"</strong> (<span style={{ color: 'var(--primary)', fontWeight: 600 }}>{productToDelete.itemId}</span>)? This action will remove it permanently from the database.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                type="button"
+                className="btn-tbl"
+                style={{ padding: '10px 22px', fontSize: '0.9rem' }}
+                onClick={() => { setShowDeleteModal(false); setProductToDelete(null); }}
+                disabled={deleteLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-submit"
+                style={{
+                  background: '#ef4444',
+                  borderColor: '#ef4444',
+                  width: 'auto',
+                  padding: '10px 22px',
+                  fontSize: '0.9rem'
+                }}
+                onClick={executeDeleteProduct}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? 'Deleting...' : 'Yes, Delete Product'}
+              </button>
+            </div>
           </div>
         </div>
       )}

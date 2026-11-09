@@ -44,8 +44,8 @@ export default function ContactPage() {
       a: 'Yes, once your order is confirmed and stock is verified in the inventory system, you can choose self-pickup from Central Warehouse A or any of our 2 city outlets.',
     },
     {
-      q: 'How does the Tile Box Calculator calculate waste buffer?',
-      a: 'The calculator adds a standard 5% to 15% allowance to the net square footage before rounding up to the nearest whole box, preventing shortages during tile cutting and fitting.',
+      q: 'How do I check tile specifications and request a quotation?',
+      a: 'Click on any tile from our catalog to open its dedicated specifications page. You can view full dimensions, box coverage, design finish, and submit a custom quotation request directly online.',
     },
     {
       q: 'Are outlet stock levels synchronized in real-time?',

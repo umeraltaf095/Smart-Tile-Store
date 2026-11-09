@@ -12,6 +12,9 @@ export default function AdminCategories() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentEditCategory, setCurrentEditCategory] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // New Category Form State (strictly matching the MongoDB schema: name, description, status)
   const [newName, setNewName] = useState('');
@@ -144,26 +147,36 @@ export default function AdminCategories() {
     }
   };
 
-  // 5. Delete Category (DELETE API)
-  const handleDeleteCategory = async (cat) => {
-    if (!confirm(`Are you sure you want to delete category "${cat.name}"?`)) {
-      return;
-    }
+  // 5. Delete Category - Open Custom Confirmation Modal
+  const confirmDeleteCategory = (cat) => {
+    setCategoryToDelete(cat);
+    setShowDeleteModal(true);
+  };
 
+  // Execute Delete via API
+  const executeDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+
+    setDeleteLoading(true);
     try {
-      const res = await fetch(`/api/categories/${cat._id}`, {
+      const res = await fetch(`/api/categories/${categoryToDelete._id}`, {
         method: 'DELETE',
       });
 
       const data = await res.json();
+      setDeleteLoading(false);
+
       if (!res.ok || !data.success) {
         showToast(data.message || 'Failed to delete category', 'error');
         return;
       }
 
-      showToast(`Category "${cat.name}" deleted successfully!`, 'success');
+      showToast(`Category "${categoryToDelete.name}" deleted successfully!`, 'success');
+      setShowDeleteModal(false);
+      setCategoryToDelete(null);
       fetchCategories();
     } catch (err) {
+      setDeleteLoading(false);
       showToast('Network error deleting category', 'error');
     }
   };
@@ -283,7 +296,7 @@ export default function AdminCategories() {
                         </button>
                         <button
                           className="btn-tbl"
-                          onClick={() => handleDeleteCategory(cat)}
+                          onClick={() => confirmDeleteCategory(cat)}
                           style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' }}
                           title="Delete Category"
                         >
@@ -411,6 +424,54 @@ export default function AdminCategories() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {showDeleteModal && categoryToDelete && (
+        <div className="modal-overlay active">
+          <div className="modal-box" style={{ maxWidth: '460px', textAlign: 'center', padding: '28px 24px' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.12)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-main)' }}>
+              Delete Category?
+            </h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', marginBottom: '24px', lineHeight: 1.5 }}>
+              Are you sure you want to delete <strong style={{ color: 'var(--text-main)' }}>"{categoryToDelete.name}"</strong>? This will remove this classification from your system.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                type="button"
+                className="btn-tbl"
+                style={{ padding: '10px 22px', fontSize: '0.9rem' }}
+                onClick={() => { setShowDeleteModal(false); setCategoryToDelete(null); }}
+                disabled={deleteLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-submit"
+                style={{
+                  background: '#ef4444',
+                  borderColor: '#ef4444',
+                  width: 'auto',
+                  padding: '10px 22px',
+                  fontSize: '0.9rem'
+                }}
+                onClick={executeDeleteCategory}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? 'Deleting...' : 'Yes, Delete Category'}
+              </button>
+            </div>
           </div>
         </div>
       )}
