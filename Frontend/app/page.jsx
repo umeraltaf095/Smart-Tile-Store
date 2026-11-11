@@ -12,8 +12,11 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [dbError, setDbError] = useState('');
 
-  // Search & Filter State for Catalog
-  const [searchQuery, setSearchQuery] = useState('');
+  // Separate Search & Filter States for Catalog
+  const [searchName, setSearchName] = useState('');
+  const [searchId, setSearchId] = useState('');
+  const [searchCompany, setSearchCompany] = useState('');
+  const [searchDesign, setSearchDesign] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   // Toast Notification State
@@ -83,25 +86,32 @@ export default function HomePage() {
     (p) => !p.status || p.status.toLowerCase() === 'active'
   );
 
-  // Filtered Products for Catalog section
+  // Filtered Products for Catalog section (Multi-field separate search)
   const filteredProducts = activeProducts.filter((product) => {
-    const q = searchQuery.toLowerCase();
+    const matchesName =
+      !searchName.trim() ||
+      (product.name && product.name.toLowerCase().includes(searchName.trim().toLowerCase()));
+
+    const matchesId =
+      !searchId.trim() ||
+      (product.itemId && product.itemId.toLowerCase().includes(searchId.trim().toLowerCase()));
+
+    const matchesCompany =
+      !searchCompany.trim() ||
+      (product.company && product.company.toLowerCase().includes(searchCompany.trim().toLowerCase()));
+
+    const matchesDesign =
+      !searchDesign.trim() ||
+      (product.design && product.design.toLowerCase().includes(searchDesign.trim().toLowerCase()));
+
     const catName = product.categoryId?.name || product.categoryName || '';
     const catId = product.categoryId?._id || product.categoryId || '';
-
-    const matchesSearch =
-      (product.name && product.name.toLowerCase().includes(q)) ||
-      (product.itemId && product.itemId.toLowerCase().includes(q)) ||
-      (product.company && product.company.toLowerCase().includes(q)) ||
-      (product.design && product.design.toLowerCase().includes(q)) ||
-      (product.size && product.size.toLowerCase().includes(q));
-
     const matchesCategory =
       selectedCategory === 'All' ||
       catId === selectedCategory ||
       catName.toLowerCase() === selectedCategory.toLowerCase();
 
-    return matchesSearch && matchesCategory;
+    return matchesName && matchesId && matchesCompany && matchesDesign && matchesCategory;
   });
 
   return (
@@ -289,38 +299,134 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Dynamic Search & Filter Bar */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-          <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
-            <input
-              type="text"
-              placeholder="Search tiles by name, item ID, company, design or size..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="form-input"
-              style={{ width: '100%', paddingLeft: '38px' }}
-            />
-            <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </div>
+        {/* Dynamic Multi-Field Search Toolbar in a Single Line with Titles */}
+        <div
+          style={{
+            background: 'var(--bg-card)',
+            padding: '16px 20px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-light)',
+            marginBottom: '32px',
+            boxShadow: 'var(--shadow-glass)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'flex-end',
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              paddingBottom: '2px',
+            }}
+          >
+            {/* 1. Name Search */}
+            <div style={{ flex: 1, minWidth: '150px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Tile Name
+              </label>
+              <input
+                type="text"
+                placeholder="Search by name..."
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                className="form-input"
+                style={{ width: '100%', padding: '9px 12px', fontSize: '0.85rem' }}
+              />
+            </div>
 
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Category:</span>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="form-input"
-              style={{ width: 'auto', padding: '8px 12px' }}
-            >
-              <option value="All">All Categories ({activeProducts.length})</option>
-              {activeCategories.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            {/* 2. Item ID Search */}
+            <div style={{ flex: 1, minWidth: '130px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Item ID
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. T-WS-101..."
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
+                className="form-input"
+                style={{ width: '100%', padding: '9px 12px', fontSize: '0.85rem' }}
+              />
+            </div>
+
+            {/* 3. Company Search */}
+            <div style={{ flex: 1, minWidth: '140px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Company
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. National..."
+                value={searchCompany}
+                onChange={(e) => setSearchCompany(e.target.value)}
+                className="form-input"
+                style={{ width: '100%', padding: '9px 12px', fontSize: '0.85rem' }}
+              />
+            </div>
+
+            {/* 4. Design Search */}
+            <div style={{ flex: 1, minWidth: '140px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Design
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Marble..."
+                value={searchDesign}
+                onChange={(e) => setSearchDesign(e.target.value)}
+                className="form-input"
+                style={{ width: '100%', padding: '9px 12px', fontSize: '0.85rem' }}
+              />
+            </div>
+
+            {/* 5. Category Selection */}
+            <div style={{ flex: 1, minWidth: '160px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Category
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="form-input"
+                style={{ width: '100%', padding: '9px 12px', fontSize: '0.85rem', cursor: 'pointer' }}
+              >
+                <option value="All">All Categories ({activeProducts.length})</option>
+                {activeCategories.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 6. Reset Filters Button */}
+            {(searchName || searchId || searchCompany || searchDesign || selectedCategory !== 'All') && (
+              <div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchName('');
+                    setSearchId('');
+                    setSearchCompany('');
+                    setSearchDesign('');
+                    setSelectedCategory('All');
+                  }}
+                  className="btn-secondary"
+                  style={{
+                    padding: '9px 14px',
+                    fontSize: '0.82rem',
+                    whiteSpace: 'nowrap',
+                    color: '#ef4444',
+                    borderColor: 'rgba(239, 68, 68, 0.3)',
+                    height: '38px',
+                  }}
+                  title="Clear all filters"
+                >
+                  ✕ Reset
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

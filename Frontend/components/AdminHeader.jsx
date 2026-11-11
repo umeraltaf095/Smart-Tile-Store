@@ -46,6 +46,11 @@ export default function AdminHeader() {
               </Link>
             </li>
             <li>
+              <Link href="/admin/orders" className={`nav-link ${pathname === '/admin/orders' ? 'active' : ''}`}>
+                Manage Orders
+              </Link>
+            </li>
+            <li>
               <Link href="/admin/dashboard#inventoryTable" className="nav-link">
                 Inventory Tracking
               </Link>

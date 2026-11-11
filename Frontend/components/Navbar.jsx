@@ -60,6 +60,13 @@ export default function Navbar() {
                 Featured Tiles
               </Link>
             </li>
+            {currentUser && (
+              <li>
+                <Link href="/orders" className={`nav-link ${pathname === '/orders' ? 'active' : ''}`}>
+                  Track Orders
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
                 Contact Us
@@ -75,9 +82,13 @@ export default function Navbar() {
               <span className="user-name">Welcome, {currentUser.name || 'User'}</span>
               <span className="user-role-tag">{currentUser.role === 'admin' ? 'Admin Manager' : 'Online Buyer'}</span>
             </div>
-            {currentUser.role === 'admin' && (
+            {currentUser.role === 'admin' ? (
               <Link href="/admin/dashboard" className="btn-tbl" style={{ marginLeft: 8, fontSize: '0.78rem' }}>
                 Admin Panel
+              </Link>
+            ) : (
+              <Link href="/orders" className="btn-tbl" style={{ marginLeft: 8, fontSize: '0.78rem', color: 'var(--primary)' }}>
+                📦 My Orders
               </Link>
             )}
             <button className="btn-logout" title="Log Out" onClick={handleLogout}>

@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
 import Toast from '../../../components/Toast';
 
 export default function ProductDetailsPage() {
   const params = useParams();
+  const router = useRouter();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -16,6 +17,15 @@ export default function ProductDetailsPage() {
 
   // Order quantity
   const [orderBoxes, setOrderBoxes] = useState(1);
+
+  // Order / Quotation Modal State
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [orderType, setOrderType] = useState('Direct Purchase');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
+  const [submittingOrder, setSubmittingOrder] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState(null); // stores created order for confirmation view
 
   // Toast
   const [toastMsg, setToastMsg] = useState('');
@@ -36,7 +46,10 @@ export default function ProductDetailsPage() {
     const saved = localStorage.getItem('smarttile_user');
     if (saved) {
       try {
-        setCurrentUser(JSON.parse(saved));
+        const u = JSON.parse(saved);
+        setCurrentUser(u);
+        if (u.address) setDeliveryAddress(u.address);
+        if (u.phone) setPhone(u.phone);
       } catch (e) {
         setCurrentUser(null);
       }
@@ -81,17 +94,79 @@ export default function ProductDetailsPage() {
   const pricePerSqFt = isBoxUnit && coveragePerBox > 0 ? tilePrice / coveragePerBox : tilePrice;
   const quotationTotal = orderBoxes * boxPrice;
 
-  // Handle Request Quotation / Order
-  const handlePlaceOrderOrQuote = () => {
+  // Open Order Modal
+  const handleOpenOrderModal = (type = 'Direct Purchase') => {
     if (!currentUser) {
-      showToast('Please log in with a registered customer account to place an order', 'error');
+      showToast('Please sign in or register to place an order or request a quote', 'error');
+      return;
+    }
+    setOrderType(type);
+    setPlacedOrder(null);
+    setShowOrderModal(true);
+  };
+
+  // Submit Order via API
+  const handleSubmitOrder = async (e) => {
+    e.preventDefault();
+
+    if (!deliveryAddress.trim()) {
+      showToast('Please enter a delivery address', 'error');
       return;
     }
 
-    showToast(
-      `Quotation request submitted for ${orderBoxes} box(es) of "${product.name}" (${product.itemId})!`,
-      'success'
-    );
+    setSubmittingOrder(true);
+    try {
+      const orderPayload = {
+        userId: currentUser._id || currentUser.id,
+        customerName: currentUser.name || 'Valued Customer',
+        customerEmail: currentUser.email,
+        customerPhone: phone.trim(),
+        deliveryAddress: deliveryAddress.trim(),
+        orderType,
+        paymentMethod: orderType === 'Price Quotation' ? 'To be discussed with Quotation' : 'Cash on Delivery',
+        items: [
+          {
+            productId: product._id,
+            itemId: product.itemId,
+            productName: product.name,
+            company: product.company,
+            size: product.size || 'Standard',
+            unitType,
+            boxCoverage: coveragePerBox,
+            pricePerUnit: tilePrice,
+            pricePerBox: boxPrice,
+            boxes: orderBoxes,
+            totalPrice: quotationTotal,
+          },
+        ],
+        totalBoxes: orderBoxes,
+        totalAmount: quotationTotal,
+        notes: '',
+      };
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload),
+      });
+
+      const data = await res.json();
+      setSubmittingOrder(false);
+
+      if (!res.ok || !data.success) {
+        showToast(data.message || 'Failed to submit order', 'error');
+        return;
+      }
+
+      setPlacedOrder(data.data);
+      showToast(
+        `${orderType === 'Price Quotation' ? 'Quotation request' : 'Order'} #${data.data.orderNumber} placed successfully!`,
+        'success'
+      );
+    } catch (err) {
+      setSubmittingOrder(false);
+      showToast('Network error while placing order', 'error');
+    }
   };
 
   return (
@@ -130,7 +205,7 @@ export default function ProductDetailsPage() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '36px', alignItems: 'start' }}>
-            
+
             {/* Left Column: Visual Showcase & Key Highlights */}
             <div>
               {/* Product Visual Card */}
@@ -340,18 +415,29 @@ export default function ProductDetailsPage() {
                   </div>
 
                   {currentUser ? (
-                    <button
-                      type="button"
-                      className="btn-submit"
-                      style={{ flex: 1, minWidth: '220px' }}
-                      onClick={handlePlaceOrderOrQuote}
-                    >
-                      <span>Request Quotation (${quotationTotal.toFixed(2)})</span>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px', flex: 1, flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="btn-submit"
+                        style={{ flex: 1, minWidth: '160px', padding: '12px 16px', fontSize: '0.88rem' }}
+                        onClick={() => handleOpenOrderModal('Direct Purchase')}
+                      >
+                        <span>Purchase Online (${quotationTotal.toFixed(2)})</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                          <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        style={{ flex: 1, minWidth: '160px', padding: '12px 16px', fontSize: '0.88rem' }}
+                        onClick={() => handleOpenOrderModal('Price Quotation')}
+                      >
+                        <span>Request Quotation</span>
+                      </button>
+                    </div>
                   ) : (
                     <div style={{ flex: 1, minWidth: '240px', display: 'flex', gap: '10px', alignItems: 'center' }}>
                       <button
@@ -422,6 +508,249 @@ export default function ProductDetailsPage() {
           </div>
         )}
       </main>
+
+      {/* Place Order & Request Quotation Modal (Feature #6) */}
+      {showOrderModal && (
+        <div className="modal-overlay active">
+          <div className="modal-box" style={{ maxWidth: '580px' }}>
+            <div className="modal-header">
+              <h3 className="modal-title">
+                {placedOrder ? '🎉 Order Confirmed!' : orderType === 'Price Quotation' ? 'Submit Quotation Request' : 'Complete Tile Purchase'}
+              </h3>
+              <button
+                className="modal-close"
+                onClick={() => {
+                  setShowOrderModal(false);
+                  if (placedOrder) router.push('/orders');
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {placedOrder ? (
+              <div className="modal-body" style={{ textAlign: 'center', padding: '24px 10px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '6px' }}>
+                  {placedOrder.orderType === 'Price Quotation' ? 'Quotation Request Received' : 'Order Placed Successfully!'}
+                </h3>
+
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', marginBottom: '16px' }}>
+                  Your reference tracking number is:
+                </p>
+
+                <div style={{ background: 'var(--bg-dark)', padding: '12px 20px', borderRadius: '8px', display: 'inline-block', border: '1px dashed var(--primary)', marginBottom: '20px' }}>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '1px' }}>
+                    {placedOrder.orderNumber}
+                  </span>
+                </div>
+
+                <div style={{ background: 'var(--bg-card)', padding: '14px 18px', borderRadius: '8px', border: '1px solid var(--border-light)', textAlign: 'left', marginBottom: '24px', fontSize: '0.88rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Tile Model:</span>
+                    <strong>{placedOrder.items[0]?.productName} ({placedOrder.items[0]?.itemId})</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Quantity:</span>
+                    <strong>{placedOrder.totalBoxes} Box(es)</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Total Amount:</span>
+                    <strong style={{ color: '#10b981' }}>${placedOrder.totalAmount.toFixed(2)}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Status:</span>
+                    <span style={{ background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', padding: '2px 8px', borderRadius: '6px', fontWeight: 700, fontSize: '0.78rem' }}>
+                      ● {placedOrder.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ flex: 1 }}
+                    onClick={() => setShowOrderModal(false)}
+                  >
+                    Continue Browsing
+                  </button>
+                  <Link
+                    href="/orders"
+                    className="btn-submit"
+                    style={{ flex: 1, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                  >
+                    <span>Track My Orders</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitOrder}>
+                <div className="modal-body">
+                  {/* Order Type Toggle */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setOrderType('Direct Purchase')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: orderType === 'Direct Purchase' ? '2px solid var(--primary)' : '1px solid var(--border-light)',
+                        background: orderType === 'Direct Purchase' ? 'rgba(37, 99, 235, 0.12)' : 'var(--bg-dark)',
+                        color: orderType === 'Direct Purchase' ? 'var(--primary)' : 'var(--text-muted)',
+                        fontWeight: 700,
+                        fontSize: '0.86rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      🛒 Direct Purchase
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOrderType('Price Quotation')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '8px',
+                        border: orderType === 'Price Quotation' ? '2px solid var(--accent-gold)' : '1px solid var(--border-light)',
+                        background: orderType === 'Price Quotation' ? 'rgba(245, 158, 11, 0.12)' : 'var(--bg-dark)',
+                        color: orderType === 'Price Quotation' ? 'var(--accent-gold)' : 'var(--text-muted)',
+                        fontWeight: 700,
+                        fontSize: '0.86rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📄 Request Quotation
+                    </button>
+                  </div>
+
+                  {/* Summary Box */}
+                  <div style={{ background: 'var(--bg-card)', padding: '14px 18px', borderRadius: '8px', border: '1px solid var(--border-light)', marginBottom: '18px', fontSize: '0.88rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span style={{ color: 'var(--text-muted)' }}>Tile:</span>
+                      <strong>{product.name} ({product.itemId})</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span style={{ color: 'var(--text-muted)' }}>Quantity:</span>
+                      <strong>{orderBoxes} Box(es) ({(orderBoxes * coveragePerBox).toFixed(1)} Sq.Ft)</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: 700, marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed var(--border-light)' }}>
+                      <span>Estimated Amount:</span>
+                      <span style={{ color: '#10b981' }}>${quotationTotal.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Customer Information (Pre-filled) */}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label">Full Name</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={currentUser?.name || ''}
+                        readOnly
+                        style={{ background: 'var(--bg-dark)', cursor: 'not-allowed' }}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Email Address</label>
+                      <input
+                        type="email"
+                        className="form-input"
+                        value={currentUser?.email || ''}
+                        readOnly
+                        style={{ background: 'var(--bg-dark)', cursor: 'not-allowed' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone & Payment */}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label">Contact Phone <span style={{ color: '#ef4444' }}>*</span></label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="e.g. +92 300 1234567"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        required
+                      />
+                    </div>
+                    {orderType === 'Direct Purchase' && (
+                      <div className="form-group">
+                        <label className="form-label">Payment Method</label>
+                        <div
+                          className="form-input"
+                          style={{
+                            background: 'var(--bg-dark)',
+                            color: '#10b981',
+                            fontWeight: 700,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'default',
+                          }}
+                        >
+                          <span>💵</span>
+                          <span>Cash on Delivery (COD)</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Delivery Address */}
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Delivery Address / Destination <span style={{ color: '#ef4444' }}>*</span></label>
+                    <textarea
+                      className="form-input"
+                      rows="2"
+                      placeholder="Enter complete site or home delivery address..."
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+
+                <div className="modal-footer" style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ flex: 1 }}
+                    onClick={() => setShowOrderModal(false)}
+                    disabled={submittingOrder}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-submit"
+                    style={{ flex: 2 }}
+                    disabled={submittingOrder}
+                  >
+                    {submittingOrder ? (
+                      'Submitting...'
+                    ) : (
+                      <span>
+                        {orderType === 'Price Quotation' ? 'Send Quotation Request' : `Confirm Order ($${quotationTotal.toFixed(2)})`}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer />
       <Toast message={toastMsg} type={toastType} isVisible={toastVisible} />
